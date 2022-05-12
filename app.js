@@ -1,10 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const setupRoutes = require('./routes');
 
 const app = express();
 
 const { SERVER_PORT } = process.env;
+
+// routes
+setupRoutes(app);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
