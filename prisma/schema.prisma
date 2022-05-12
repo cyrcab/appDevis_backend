@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model User {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  FirstName             String                  @db.VarChar(45)
+  LastName              String                  @db.VarChar(45)
+  Role_id               Int
+  created_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime                @db.DateTime(0)
+  password              String                  @db.VarChar(255)
+  mail                  String                  @unique(map: "mail_UNIQUE") @db.VarChar(45)
+  modified_by           String?                 @db.VarChar(45)
+  Role                  Role                    @relation(fields: [Role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_Role")
+  Answer                Answer[]
+  Category              Category[]
+  Estimate              Estimate[]
+  Question              Question[]
+  User_has_Notification User_has_Notification[]
+
+  @@index([Role_id], map: "fk_User_Role_idx")
+}
+
+model Answer {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  User_id               Int                     @db.UnsignedInt
+  created_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime                @db.DateTime(0)
+  content               String                  @db.VarChar(255)
+  price                 Int
+  modified_by           String?                 @db.VarChar(45)
+  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User1")
+  Question_has_Response Question_has_Response[]
+
+  @@index([User_id], map: "fk_Response_User1_idx")
+}
+
+model Category {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  User_id               Int                     @db.UnsignedInt
+  created_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime                @db.DateTime(0)
+  name                  String                  @db.VarChar(45)
+  modified_by           String?                 @db.VarChar(45)
+  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_User1")
+  Category_has_Question Category_has_Question[]
+  Estimate              Estimate[]
+
+  @@index([User_id], map: "fk_Category_User1_idx")
+}
+
+model Category_has_Question {
+  Category_id Int      @db.UnsignedInt
+  Question_id Int      @db.UnsignedInt
+  Category    Category @relation(fields: [Category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_has_Question_Category1")
+  Question    Question @relation(fields: [Question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_has_Question_Question1")
+
+  @@id([Category_id, Question_id])
+  @@index([Category_id], map: "fk_Category_has_Question_Category1_idx")
+  @@index([Question_id], map: "fk_Category_has_Question_Question1_idx")
+}
+
+model Customer {
+  id             Int        @id @default(autoincrement()) @db.UnsignedInt
+  lastname       String     @db.VarChar(45)
+  firstname      String     @db.VarChar(45)
+  company        String     @db.VarChar(45)
+  phone          String     @db.VarChar(45)
+  mail           String     @db.VarChar(45)
+  created_number Int
+  Estimate       Estimate[]
+}
+
+model Estimate {
+  id                    Int                     @default(autoincrement()) @db.UnsignedInt
+  User_id               Int                     @db.UnsignedInt
+  Category_id           Int                     @db.UnsignedInt
+  Offer_id              Int                     @db.UnsignedInt
+  Offer_User_id         Int                     @db.UnsignedInt
+  Offer_Response_id     Int                     @db.UnsignedInt
+  created_at            DateTime                @db.DateTime(0)
+  price                 DateTime                @db.DateTime(0)
+  customer_id           Int                     @db.UnsignedInt
+  Category              Category                @relation(fields: [Category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_Category1")
+  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User1")
+  Customer              Customer                @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_customer1")
+  Estimate_has_Question Estimate_has_Question[]
+
+  @@id([id, customer_id])
+  @@index([Category_id], map: "fk_Estimate_Category1_idx")
+  @@index([Offer_id, Offer_User_id, Offer_Response_id], map: "fk_Estimate_Offer1_idx")
+  @@index([User_id], map: "fk_Estimate_User1_idx")
+  @@index([customer_id], map: "fk_Estimate_customer1_idx")
+}
+
+model Estimate_has_Question {
+  Estimate_id Int      @db.UnsignedInt
+  Question_id Int      @db.UnsignedInt
+  Estimate    Estimate @relation(fields: [Estimate_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_has_Question_Estimate1")
+  Question    Question @relation(fields: [Question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_has_Question_Question1")
+
+  @@id([Estimate_id, Question_id])
+  @@index([Estimate_id], map: "fk_Estimate_has_Question_Estimate1_idx")
+  @@index([Question_id], map: "fk_Estimate_has_Question_Question1_idx")
+}
+
+model Notification {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  date                  DateTime                @db.DateTime(0)
+  is_read               Int                     @db.TinyInt
+  User_has_Notification User_has_Notification[]
+}
+
+model Question {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  User_id               Int                     @db.UnsignedInt
+  created_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime                @db.DateTime(0)
+  is_public             Int                     @db.TinyInt
+  content               String                  @db.VarChar(255)
+  indication            String?                 @db.VarChar(255)
+  modified_by           String?                 @db.VarChar(45)
+  has_multiple_choice   Int                     @db.TinyInt
+  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User1")
+  Category_has_Question Category_has_Question[]
+  Estimate_has_Question Estimate_has_Question[]
+  Question_has_Response Question_has_Response[]
+
+  @@index([User_id], map: "fk_Question_User1_idx")
+}
+
+model Question_has_Response {
+  Question_id Int      @db.UnsignedInt
+  Answer_id   Int      @db.UnsignedInt
+  Answer      Answer   @relation(fields: [Answer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_has_Response_Response1")
+  Question    Question @relation(fields: [Question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_has_Response_Question1")
+
+  @@id([Question_id, Answer_id])
+  @@index([Question_id], map: "fk_Question_has_Response_Question1_idx")
+  @@index([Answer_id], map: "fk_Question_has_Response_Response1_idx")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  Name String @db.VarChar(45)
+  User User[]
+}
+
+model User_has_Notification {
+  User_id         Int          @db.UnsignedInt
+  Notification_id Int          @db.UnsignedInt
+  Notification    Notification @relation(fields: [Notification_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_has_Notification_Notification1")
+  User            User         @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_has_Notification_User1")
+
+  @@id([User_id, Notification_id])
+  @@index([Notification_id], map: "fk_User_has_Notification_Notification1_idx")
+  @@index([User_id], map: "fk_User_has_Notification_User1_idx")
+}
+
