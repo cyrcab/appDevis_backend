@@ -1,5 +1,14 @@
 {
+  "scripts": {
+    "start": "node app.js",
+    "start:server:watch": "nodemon app.js"
+  },
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.16"
   }
 }
