@@ -28,13 +28,11 @@ async function handleGetUniqueUser(req, res, next) {
 
 async function handleCreateUser(req, res, next) {
   try {
-    const created_at = new Date('December 17, 1995 03:24:00');
-    const updated_at = new Date('December 17, 1995 03:24:00');
+    const created_at = formatDate(new Date());
     const userToCreate = await prisma.user.create({
       data: {
         ...req.body,
         created_at: created_at,
-        updated_at: updated_at,
       },
     });
     res.json(userToCreate).status(201);
