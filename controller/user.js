@@ -45,16 +45,36 @@ async function handleCreateUser(req, res, next) {
     next(err);
   }
 }
-// async function handleDeleteUser(req, res, next) {
-//   try {
+async function handleDeleteUser(req, res, next) {
+  try {
+    const { id } = req.params;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
 
-//   } catch (error) {
-
-//   }
-// }
+    if (user) {
+      await prisma.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
+      res.status(200).json({ message: 'user correctly deleted', user: { ...user } });
+    } else {
+      res.status(404).json({
+        message: 'user not found, did you enter the correct id',
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
 
 module.exports = {
   handleCreateUser,
   handleGetAllUsers,
   handleGetUniqueUser,
+  handleDeleteUser,
 };
