@@ -25,11 +25,12 @@ async function handleCreateUser(req, res, next) {
   } catch (err) {
     console.log(err);
     if (err) {
-      res.json({ message: 'error when creatin user' }).status(400);
+      res.status(400).json({ message: 'error when creating user' });
     }
     next(err);
   }
 }
+
 
 module.exports = {
   handleCreateUser,
