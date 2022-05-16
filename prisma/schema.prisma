@@ -14,7 +14,7 @@ model User {
   LastName              String                  @db.VarChar(45)
   Role_id               Int
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime?                @db.DateTime(0)
+  updated_at            DateTime?               @db.DateTime(0)
   password              String                  @db.VarChar(255)
   mail                  String                  @unique(map: "mail_UNIQUE") @db.VarChar(45)
   modified_by           String?                 @db.VarChar(45)
@@ -24,6 +24,7 @@ model User {
   Estimate              Estimate[]
   Question              Question[]
   User_has_Notification User_has_Notification[]
+  Offer                 Offer[]
 
   @@index([Role_id], map: "fk_User_Role_idx")
 }
@@ -32,7 +33,7 @@ model Answer {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
   User_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime?                @db.DateTime(0)
+  updated_at            DateTime?               @db.DateTime(0)
   content               String                  @db.VarChar(255)
   price                 Int
   modified_by           String?                 @db.VarChar(45)
@@ -76,6 +77,20 @@ model Customer {
   mail           String     @db.VarChar(45)
   created_number Int
   Estimate       Estimate[]
+}
+
+model Offer {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  User_id     Int       @db.UnsignedInt
+  created_at  DateTime  @db.DateTime(0)
+  updated_at  DateTime? @db.DateTime(0)
+  modified_by String?   @db.VarChar(45)
+  name        String    @db.VarChar(45)
+  price       Int       @db.UnsignedInt
+  User        User      @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Offer_User1")
+
+
+  @@index([User_id], map: "fk_Offer_User1_idx")
 }
 
 model Estimate {
@@ -122,7 +137,7 @@ model Question {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
   User_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime?                @db.DateTime(0)
+  updated_at            DateTime?               @db.DateTime(0)
   is_public             Int                     @db.TinyInt
   content               String                  @db.VarChar(255)
   indication            String?                 @db.VarChar(255)
