@@ -14,7 +14,7 @@ model User {
   LastName              String                  @db.VarChar(45)
   Role_id               Int
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime?                @db.DateTime(0)
   password              String                  @db.VarChar(255)
   mail                  String                  @unique(map: "mail_UNIQUE") @db.VarChar(45)
   modified_by           String?                 @db.VarChar(45)
@@ -32,7 +32,7 @@ model Answer {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
   User_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime?                @db.DateTime(0)
   content               String                  @db.VarChar(255)
   price                 Int
   modified_by           String?                 @db.VarChar(45)
@@ -46,7 +46,7 @@ model Category {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
   User_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime?               @db.DateTime(0)
   name                  String                  @db.VarChar(45)
   modified_by           String?                 @db.VarChar(45)
   User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_User1")
@@ -122,7 +122,7 @@ model Question {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
   User_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime                @db.DateTime(0)
+  updated_at            DateTime?                @db.DateTime(0)
   is_public             Int                     @db.TinyInt
   content               String                  @db.VarChar(255)
   indication            String?                 @db.VarChar(255)
@@ -163,4 +163,3 @@ model User_has_Notification {
   @@index([Notification_id], map: "fk_User_has_Notification_Notification1_idx")
   @@index([User_id], map: "fk_User_has_Notification_User1_idx")
 }
-

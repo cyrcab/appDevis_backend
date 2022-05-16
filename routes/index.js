@@ -1,8 +1,9 @@
-const testRoute = require('./testRoutes')
-
+const userRouter = require('./user');
+const categoryRouter = require('./category');
 
 const setupRoutes = (app) => {
-  app.use('/', testRoute);
+  app.use('/api/users', userRouter);
+  app.use('/api/categories', userRouter);
 };
 
 module.exports = setupRoutes;
