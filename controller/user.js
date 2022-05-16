@@ -39,7 +39,7 @@ async function handleCreateUser(req, res, next) {
         created_at: dateCreation,
       },
     });
-    res.json({ userToCreate, message: 'user created with succes', isCreated: true }).status(201);
+    res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
   } catch (error) {
     console.log(error);
     if (error) {
