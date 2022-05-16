@@ -10,7 +10,7 @@ async function handleCreateOffer(req, res, next) {
         created_at: dateCreation,
       },
     });
-    res.json({ offerToCreate, message: 'offer created with succes', isCreated: true }).status(201);
+    res.status(201).json({ offerToCreate, message: 'offer created with succes', isCreated: true });
   } catch (error) {
     console.next(error);
     if (error) {
@@ -53,10 +53,111 @@ async function handleGetAllOffers(req, res, next) {
   }
 }
 
+async function handleGetUniqueOffer(req, res, next) {
+  try {
+    const { id } = req.params;
+    const offer = await prisma.offer.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
+        description: true,
+        price: true,
+        User: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (offer) {
+      res.status(200).json({
+        offer,
+        message: 'offer found',
+        isFounded: true,
+      });
+    } else {
+      res.status(404).json({
+        message: `no offer found with id : ${id}`,
+        isFounded: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+async function handleDeleteOffer(req, res, next) {
+  try {
+    const { id } = req.params;
+    const offer = await prisma.offer.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
+        description: true,
+        price: true,
+        User: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (offer) {
+      await prisma.offer.delete({
+        where: {
+          id: offer.id,
+        },
+      });
+      res.status(200).json({
+        message: `offer with id : ${id} correctly deleted`,
+        category: { ...offer },
+        isDeleted: true,
+      });
+    } else {
+      res.status(404).json({
+        message: `offer with id : ${id} does not exist`,
+        isDeleted: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
 module.exports = {
   handleCreateOffer,
   handleGetAllOffers,
-  // handleGetUniqueOffer,
-  // handleDeleteOffer,
+  handleGetUniqueOffer,
+  handleDeleteOffer,
   // handleUpdateOffer,
 };
