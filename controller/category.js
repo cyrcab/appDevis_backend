@@ -25,7 +25,13 @@ async function handleCreateCategory(req, res, next) {
 async function handleGetAllCategories(req, res, next) {
   try {
     const listOfCategories = await prisma.category.findMany({
-      include: {
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
         Category_has_Question: true,
         Estimate: true,
         User: {
@@ -56,7 +62,13 @@ async function handleGetUniqueCategory(req, res, next) {
       where: {
         id: parseInt(id),
       },
-      include: {
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
         Category_has_Question: true,
         Estimate: true,
         User: {
@@ -76,11 +88,154 @@ async function handleGetUniqueCategory(req, res, next) {
     if (category) {
       res.status(200).json({ category, message: 'category found', isFounded: true });
     } else {
-      res.status(404).json({ message: 'no category found', isFounded: false });
+      res.status(404).json({ message: `no category found with id : ${id}`, isFounded: false });
     }
   } catch (error) {
     console.error(error);
     next(error);
   }
 }
-module.exports = { handleCreateCategory, handleGetAllCategories, handleGetUniqueCategory };
+
+async function handleDeleteCategory(req, res, next) {
+  try {
+    const { id } = req.params;
+    const category = await prisma.category.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
+        Category_has_Question: true,
+        Estimate: true,
+        User: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (category) {
+      await prisma.category.delete({
+        where: { id: category.id },
+      });
+      res.status(200).json({
+        message: `category with id : ${id} correctly deleted`,
+        category: { ...category },
+        isDeleted: true,
+      });
+    } else {
+      res.status(404).json({
+        message: `category with id : ${id} does not exist`,
+        isDeleted: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+async function handleUpdateCategory(req, res, next) {
+  try {
+    const updateDate = formatDate(new Date());
+    const { id } = req.params;
+    const dataToUpdate = req.body;
+    const category = await prisma.category.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
+        Category_has_Question: true,
+        Estimate: true,
+        User: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (category) {
+      const updatedCategory = await prisma.category.update({
+        where: { id: category.id },
+        data: {
+          ...dataToUpdate,
+          updated_at: updateDate,
+        },
+        select: {
+          User_id: false,
+          id: true,
+          created_at: true,
+          updated_at: true,
+          name: true,
+          modified_by: true,
+          Category_has_Question: true,
+          Estimate: true,
+          User: {
+            select: {
+              FirstName: true,
+              LastName: true,
+              mail: true,
+              Role: {
+                select: {
+                  Name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      res.status(200).json({
+        message: `category with id : ${id} correctly updated`,
+        isUpdated: true,
+        categoryBeforeUpdate: { ...category },
+        dataUpdated: { ...dataToUpdate, updated_at: updateDate },
+        categoryAfterUpdate: {
+          ...updatedCategory,
+        },
+      });
+    } else {
+      res.status(404).json({
+        message: `category with id : ${id} does not exist`,
+        isUpdated: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+module.exports = {
+  handleCreateCategory,
+  handleGetAllCategories,
+  handleGetUniqueCategory,
+  handleDeleteCategory,
+  handleUpdateCategory,
+};
