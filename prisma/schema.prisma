@@ -85,6 +85,7 @@ model Offer {
   created_at  DateTime  @db.DateTime(0)
   updated_at  DateTime? @db.DateTime(0)
   modified_by String?   @db.VarChar(45)
+  description String?   @db.LongText()
   name        String    @db.VarChar(45)
   price       Int       @db.UnsignedInt
   User        User      @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Offer_User1")

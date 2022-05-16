@@ -1,0 +1,62 @@
+const prisma = require('../helpers/prismaClient.js');
+const formatDate = require('../helpers/formatDate');
+
+async function handleCreateOffer(req, res, next) {
+  try {
+    const dateCreation = formatDate(new Date());
+    const offerToCreate = await prisma.offer.create({
+      data: {
+        ...req.body,
+        created_at: dateCreation,
+      },
+    });
+    res.json({ offerToCreate, message: 'offer created with succes', isCreated: true }).status(201);
+  } catch (error) {
+    console.next(error);
+    if (error) {
+      res.status(400).json({ message: 'error when creating offer', isCreated: false });
+    }
+    next(error);
+  }
+}
+
+async function handleGetAllOffers(req, res, next) {
+  try {
+    const listOfOffer = await prisma.offer.findMany({
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        name: true,
+        modified_by: true,
+        description: true,
+        price: true,
+        User: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res.status(200).json(listOfOffer);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+module.exports = {
+  handleCreateOffer,
+  handleGetAllOffers,
+  // handleGetUniqueOffer,
+  // handleDeleteOffer,
+  // handleUpdateOffer,
+};
