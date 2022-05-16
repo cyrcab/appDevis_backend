@@ -12,16 +12,16 @@ async function handleGetAllUsers(req, res, next) {
 
 async function handleGetUniqueUser(req, res, next) {
   try {
-    const { id } = parseInt(req.params, 10);
+    const { id } = req.params;
     const user = await prisma.user.findUnique({
       where: {
-        id: id,
+        id: parseInt(id),
       },
     });
-    res.status(200).json({ message: 'user found', status: 'OK' });
-    console.log(user);
+    res.status(200).json({ message: 'user found', status: 'OK', user: { ...user } });
   } catch (error) {
     console.log(error);
+    next(error);
   }
 }
 
