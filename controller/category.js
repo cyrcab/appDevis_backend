@@ -33,7 +33,11 @@ async function handleGetAllCategories(req, res, next) {
             FirstName: true,
             LastName: true,
             mail: true,
-            Role_id: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
           },
         },
       },
@@ -45,4 +49,38 @@ async function handleGetAllCategories(req, res, next) {
   }
 }
 
-module.exports = { handleCreateCategory, handleGetAllCategories };
+async function handleGetUniqueCategory(req, res, next) {
+  try {
+    const { id } = req.params;
+    const category = await prisma.category.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      include: {
+        Category_has_Question: true,
+        Estimate: true,
+        User: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (category) {
+      res.status(200).json({ category, message: 'category found', isFounded: true });
+    } else {
+      res.status(404).json({ message: 'no category found', isFounded: false });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+module.exports = { handleCreateCategory, handleGetAllCategories, handleGetUniqueCategory };
