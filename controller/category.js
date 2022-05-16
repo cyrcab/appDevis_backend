@@ -215,7 +215,7 @@ async function handleUpdateCategory(req, res, next) {
         message: `category with id : ${id} correctly updated`,
         isUpdated: true,
         categoryBeforeUpdate: { ...category },
-        dataUpdated: { ...dataToUpdate, updated_at: updateDate },
+        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
         categoryAfterUpdate: {
           ...updatedCategory,
         },

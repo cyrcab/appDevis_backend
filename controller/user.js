@@ -19,7 +19,11 @@ async function handleGetUniqueUser(req, res, next) {
         id: parseInt(id),
       },
     });
-    res.status(200).json({ message: 'user found', status: 'OK', user: { ...user } });
+    if (user) {
+      res.status(200).json({ user, message: 'user found', isFounded: true });
+    } else {
+      res.status(404).json({ message: `no user found with id : ${id}`, isFounded: false });
+    }
   } catch (error) {
     console.log(error);
     next(error);
@@ -35,11 +39,11 @@ async function handleCreateUser(req, res, next) {
         created_at: dateCreation,
       },
     });
-    res.json(userToCreate).status(201);
+    res.json({ userToCreate, message: 'user created with succes', isCreated: true }).status(201);
   } catch (error) {
     console.log(error);
     if (error) {
-      res.status(400).json({ message: 'error when creating user' });
+      res.status(400).json({ message: 'error when creating user', isCreated: false });
     }
     next(err);
   }
@@ -59,13 +63,14 @@ async function handleDeleteUser(req, res, next) {
           id: user.id,
         },
       });
-      res
-        .status(200)
-        .json({ message: 'user correctly deleted', user: { ...user }, isDeleted: true });
+      res.status(200).json({
+        message: `user with id ${id} correctly deleted`,
+        user: { ...user },
+        isDeleted: true,
+      });
     } else {
       res.status(404).json({
-        message: 'user not found, did you enter the correct id ?',
-        idSearched: `${id}`,
+        message: `user with id : ${id} does not exist`,
         isDeleted: false,
       });
     }
@@ -96,16 +101,15 @@ async function handleUpdateUser(req, res, next) {
         },
       });
       res.status(200).json({
-        message: 'user updated with success',
-        isModified: true,
-        lastDatas: { ...user },
-        dataUpdated: { ...dataToUpdate, updated_at: updateDate },
-        newDatas: { ...updatedUser },
+        message: `user with id : ${id} correctly updated`,
+        isUpdated: true,
+        userBeforeUpdate: { ...user },
+        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
+        userAfterUpdate: { ...updatedUser },
       });
     } else {
       res.status(404).json({
-        message: 'user not found, did you enter the correct id ?',
-        idSearched: `${id}`,
+        message: `user with id : ${id} does not exist`,
         isModified: false,
       });
     }
