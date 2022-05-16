@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node app.js",
-    "start:server:watch": "nodemon app.js"
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "@prisma/client": "^3.14.0",

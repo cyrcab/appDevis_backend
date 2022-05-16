@@ -4,9 +4,23 @@ async function handleGetAllUsers(req, res, next) {
   try {
     const listOfUsers = await prisma.user.findMany();
     res.json(listOfUsers).status(200);
-  } catch (err) {
-    console.log(err);
-    next(err);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
+async function getUniqueUser(req, res, next) {
+  try {
+    const userId = req.params;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    console.log(user);
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -22,17 +36,24 @@ async function handleCreateUser(req, res, next) {
       },
     });
     res.json(userToCreate).status(201);
-  } catch (err) {
-    console.log(err);
-    if (err) {
+  } catch (error) {
+    console.log(error);
+    if (error) {
       res.status(400).json({ message: 'error when creating user' });
     }
     next(err);
   }
 }
+// async function handleDeleteUser(req, res, next) {
+//   try {
 
+//   } catch (error) {
+
+//   }
+// }
 
 module.exports = {
   handleCreateUser,
   handleGetAllUsers,
+  getUniqueUser,
 };
