@@ -1,8 +1,8 @@
 const categoryRouter = require('express').Router();
-const { handleCreateCategory } = require('../controller/category');
+const { handleCreateCategory, handleGetAllCategories } = require('../controller/category');
 
 categoryRouter.post('/', handleCreateCategory);
-// categoryRouter.get('/', );
+categoryRouter.get('/', handleGetAllCategories);
 // categoryRouter.get('/:id', );
 // categoryRouter.delete('/:id', );
 // categoryRouter.put('/:id', );
