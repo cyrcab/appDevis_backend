@@ -6,3 +6,5 @@ categoryRouter.post('/', handleCreateCategory);
 // categoryRouter.get('/:id', );
 // categoryRouter.delete('/:id', );
 // categoryRouter.put('/:id', );
+
+module.exports = categoryRouter;
