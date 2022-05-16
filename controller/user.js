@@ -10,14 +10,15 @@ async function handleGetAllUsers(req, res, next) {
   }
 }
 
-async function getUniqueUser(req, res, next) {
+async function handleGetUniqueUser(req, res, next) {
   try {
-    const userId = req.params;
+    const { id } = parseInt(req.params, 10);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        id: id,
       },
     });
+    res.status(200).json({ message: 'user found', status: 'OK' });
     console.log(user);
   } catch (error) {
     console.log(error);
@@ -55,5 +56,5 @@ async function handleCreateUser(req, res, next) {
 module.exports = {
   handleCreateUser,
   handleGetAllUsers,
-  getUniqueUser,
+  handleGetUniqueUser,
 };

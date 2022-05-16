@@ -163,4 +163,3 @@ model User_has_Notification {
   @@index([Notification_id], map: "fk_User_has_Notification_Notification1_idx")
   @@index([User_id], map: "fk_User_has_Notification_User1_idx")
 }
-
