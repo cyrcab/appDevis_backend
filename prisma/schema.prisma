@@ -139,11 +139,11 @@ model Question {
   User_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
   updated_at            DateTime?               @db.DateTime(0)
-  is_public             Int                     @db.TinyInt
+  is_public             Boolean                 @db.TinyInt
   content               String                  @db.VarChar(255)
   indication            String?                 @db.VarChar(255)
   modified_by           String?                 @db.VarChar(45)
-  has_multiple_choice   Int                     @db.TinyInt
+  has_multiple_choice   Boolean                 @db.TinyInt
   User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User1")
   Category_has_Question Category_has_Question[]
   Estimate_has_Question Estimate_has_Question[]
