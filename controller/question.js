@@ -25,7 +25,7 @@ async function handleGetAllQuestions(req, res, next) {
   try {
     const listOfQuestions = await prisma.question.findMany({
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -35,8 +35,8 @@ async function handleGetAllQuestions(req, res, next) {
         indication: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -62,7 +62,7 @@ async function handleGetUniqueQuestion(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -72,8 +72,8 @@ async function handleGetUniqueQuestion(req, res, next) {
         indication: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -103,7 +103,7 @@ async function handleDeleteQuestion(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -113,8 +113,8 @@ async function handleDeleteQuestion(req, res, next) {
         indication: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -156,7 +156,7 @@ async function handleUpdateQuestion(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -166,8 +166,8 @@ async function handleUpdateQuestion(req, res, next) {
         indication: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -189,7 +189,7 @@ async function handleUpdateQuestion(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          User_id: false,
+          user_id: false,
           id: true,
           created_at: true,
           updated_at: true,
@@ -199,8 +199,8 @@ async function handleUpdateQuestion(req, res, next) {
           indication: true,
           User: {
             select: {
-              LastName: true,
-              FirstName: true,
+              lastName: true,
+              firstName: true,
               mail: true,
               Role: {
                 select: {

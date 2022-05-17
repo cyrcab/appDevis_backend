@@ -26,7 +26,7 @@ async function handleGetAllCategories(req, res, next) {
   try {
     const listOfCategories = await prisma.category.findMany({
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -36,8 +36,8 @@ async function handleGetAllCategories(req, res, next) {
         Estimate: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -63,7 +63,7 @@ async function handleGetUniqueCategory(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -73,8 +73,8 @@ async function handleGetUniqueCategory(req, res, next) {
         Estimate: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -104,7 +104,7 @@ async function handleDeleteCategory(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -114,8 +114,8 @@ async function handleDeleteCategory(req, res, next) {
         Estimate: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -158,7 +158,7 @@ async function handleUpdateCategory(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -168,8 +168,8 @@ async function handleUpdateCategory(req, res, next) {
         Estimate: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -189,7 +189,7 @@ async function handleUpdateCategory(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          User_id: false,
+          user_id: false,
           id: true,
           created_at: true,
           updated_at: true,
@@ -199,8 +199,8 @@ async function handleUpdateCategory(req, res, next) {
           Estimate: true,
           User: {
             select: {
-              FirstName: true,
-              LastName: true,
+              firstName: true,
+              lastName: true,
               mail: true,
               Role: {
                 select: {
