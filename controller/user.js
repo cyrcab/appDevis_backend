@@ -20,9 +20,9 @@ async function handleGetUniqueUser(req, res, next) {
       },
     });
     if (user) {
-      res.status(200).json({ user, message: 'user found', isFounded: true });
+      res.status(200).json({ user, message: 'user found', isFound: true });
     } else {
-      res.status(404).json({ message: `no user found with id : ${id}`, isFounded: false });
+      res.status(404).json({ message: `no user found with id : ${id}`, isFound: false });
     }
   } catch (error) {
     console.log(error);

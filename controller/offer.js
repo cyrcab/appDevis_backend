@@ -87,12 +87,12 @@ async function handleGetUniqueOffer(req, res, next) {
       res.status(200).json({
         offer,
         message: 'offer found',
-        isFounded: true,
+        isFound: true,
       });
     } else {
       res.status(404).json({
         message: `no offer found with id : ${id}`,
-        isFounded: false,
+        isFound: false,
       });
     }
   } catch (error) {

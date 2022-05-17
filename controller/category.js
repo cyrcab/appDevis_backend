@@ -86,9 +86,9 @@ async function handleGetUniqueCategory(req, res, next) {
       },
     });
     if (category) {
-      res.status(200).json({ category, message: 'category found', isFounded: true });
+      res.status(200).json({ category, message: 'category found', isFound: true });
     } else {
-      res.status(404).json({ message: `no category found with id : ${id}`, isFounded: false });
+      res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
     }
   } catch (error) {
     console.error(error);

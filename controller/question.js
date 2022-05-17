@@ -86,9 +86,9 @@ async function handleGetUniqueQuestion(req, res, next) {
       },
     });
     if (question) {
-      res.status(200).json({ question, message: 'question found', isFounded: true });
+      res.status(200).json({ question, message: 'question found', isFound: true });
     } else {
-      res.status(404).json({ message: `no question found with id : ${id}`, isFounded: false });
+      res.status(404).json({ message: `no question found with id : ${id}`, isFound: false });
     }
   } catch (error) {
     console.error(next);
