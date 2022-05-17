@@ -1,9 +1,28 @@
 const prisma = require('../helpers/prismaClient.js');
 const formatDate = require('../helpers/formatDate');
+const { generateToken } = require('../services/auth');
+const { hashPassword, verifyPassword } = require('../services/hashPassword');
 
-async function handleGetAllUsers(req, res, next) {
+async function getAllUsers(req, res, next) {
   try {
-    const listOfUsers = await prisma.user.findMany();
+    const listOfUsers = await prisma.user.findMany({
+      select: {
+        password: false,
+        id: true,
+        FirstName: true,
+        LastName: true,
+        Role_id: true,
+        created_at: true,
+        updated_at: true,
+        mail: true,
+        Role: {
+          select: {
+            Name: true,
+          },
+        },
+        modified_by: true,
+      },
+    });
     res.json(listOfUsers).status(200);
   } catch (error) {
     console.log(error);
@@ -11,12 +30,28 @@ async function handleGetAllUsers(req, res, next) {
   }
 }
 
-async function handleGetUniqueUser(req, res, next) {
+async function getUniqueUser(req, res, next) {
   try {
     const { id } = req.params;
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
+      },
+      select: {
+        password: false,
+        id: true,
+        FirstName: true,
+        LastName: true,
+        Role_id: true,
+        created_at: true,
+        updated_at: true,
+        mail: true,
+        Role: {
+          select: {
+            Name: true,
+          },
+        },
+        modified_by: true,
       },
     });
     if (user) {
@@ -30,16 +65,76 @@ async function handleGetUniqueUser(req, res, next) {
   }
 }
 
-async function handleCreateUser(req, res, next) {
+async function loginUser(req, res, next) {
   try {
-    const dateCreation = formatDate(new Date());
-    const userToCreate = await prisma.user.create({
-      data: {
-        ...req.body,
-        created_at: dateCreation,
+    const { mail } = req.body;
+    const userExist = await prisma.user.findUnique({
+      where: {
+        mail: mail,
       },
     });
-    res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
+    if (userExist) {
+      const isVerifiedPass = await verifyPassword(req.body.password, userExist.password);
+      if (isVerifiedPass) {
+        const token = generateToken(userExist);
+        delete userExist.password;
+        res
+          .status(201)
+          .cookie('acces-token', token, { httpOnly: true })
+          .json({
+            message: 'User connected',
+            isConnected: true,
+            ...userExist,
+          });
+      } else {
+        res.status(401).json({ message: 'Incorrect password', isConnected: false });
+      }
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+async function createUser(req, res, next) {
+  try {
+    const { mail, password } = req.body;
+    const dateCreation = formatDate(new Date());
+    const userExist = await prisma.user.findUnique({
+      where: {
+        mail: mail,
+      },
+    });
+
+    if (userExist) {
+      res.status(409).json({ message: 'User already exist', isCreated: false });
+    } else {
+      const hashedPassword = await hashPassword(password);
+      const userToCreate = await prisma.user.create({
+        data: {
+          ...req.body,
+          created_at: dateCreation,
+          password: hashedPassword,
+        },
+        select: {
+          password: false,
+          id: true,
+          FirstName: true,
+          LastName: true,
+          Role_id: true,
+          created_at: true,
+          mail: true,
+          Role: {
+            select: {
+              Name: true,
+            },
+          },
+        },
+      });
+      res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
+    }
   } catch (error) {
     console.log(error);
     if (error) {
@@ -48,12 +143,28 @@ async function handleCreateUser(req, res, next) {
     next(err);
   }
 }
-async function handleDeleteUser(req, res, next) {
+async function deleteUser(req, res, next) {
   try {
     const { id } = req.params;
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
+      },
+      select: {
+        password: false,
+        id: true,
+        FirstName: true,
+        LastName: true,
+        Role_id: true,
+        created_at: true,
+        updated_at: true,
+        mail: true,
+        Role: {
+          select: {
+            Name: true,
+          },
+        },
+        modified_by: true,
       },
     });
 
@@ -79,7 +190,7 @@ async function handleDeleteUser(req, res, next) {
     next(error);
   }
 }
-async function handleUpdateUser(req, res, next) {
+async function updateUser(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
     const { id } = req.params;
@@ -87,6 +198,22 @@ async function handleUpdateUser(req, res, next) {
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
+      },
+      select: {
+        password: false,
+        id: true,
+        FirstName: true,
+        LastName: true,
+        Role_id: true,
+        created_at: true,
+        updated_at: true,
+        mail: true,
+        Role: {
+          select: {
+            Name: true,
+          },
+        },
+        modified_by: true,
       },
     });
 
@@ -98,6 +225,22 @@ async function handleUpdateUser(req, res, next) {
         data: {
           ...dataToUpdate,
           updated_at: updateDate,
+        },
+        select: {
+          password: false,
+          id: true,
+          FirstName: true,
+          LastName: true,
+          Role_id: true,
+          created_at: true,
+          updated_at: true,
+          mail: true,
+          Role: {
+            select: {
+              Name: true,
+            },
+          },
+          modified_by: true,
         },
       });
       res.status(200).json({
@@ -119,9 +262,10 @@ async function handleUpdateUser(req, res, next) {
 }
 
 module.exports = {
-  handleCreateUser,
-  handleGetAllUsers,
-  handleGetUniqueUser,
-  handleDeleteUser,
-  handleUpdateUser,
+  createUser,
+  getAllUsers,
+  getUniqueUser,
+  deleteUser,
+  updateUser,
+  loginUser,
 };
