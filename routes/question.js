@@ -4,13 +4,13 @@ const {
   handleGetAllQuestions,
   handleGetUniqueQuestion,
   handleDeleteQuestion,
-  // handleUpdateQuestion,
+  handleUpdateQuestion,
 } = require('../controller/question');
 
 questionRouter.post('/', handleCreateQuestion);
 questionRouter.get('/', handleGetAllQuestions);
 questionRouter.get('/:id', handleGetUniqueQuestion);
 questionRouter.delete('/:id', handleDeleteQuestion);
-// questionRouter.put('/:id', handleUpdateQuestion);
+questionRouter.put('/:id', handleUpdateQuestion);
 
 module.exports = questionRouter;

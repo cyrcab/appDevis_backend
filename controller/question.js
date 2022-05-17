@@ -146,18 +146,97 @@ async function handleDeleteQuestion(req, res, next) {
     next(error);
   }
 }
-// async function handleUpdateQuestion(req, res, next) {
-//   try {
-//   } catch (error) {
-//     console.error(next);
-//     next(error);
-//   }
-// }
+async function handleUpdateQuestion(req, res, next) {
+  try {
+    const updateDate = formatDate(new Date());
+    const { id } = req.params;
+    const dataToUpdate = req.body;
+    const question = await prisma.question.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        content: true,
+        is_public: true,
+        has_multiple_choice: true,
+        indication: true,
+        User: {
+          select: {
+            LastName: true,
+            FirstName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+        Question_has_Response: true,
+      },
+    });
+    if (question) {
+      const updatedQuestion = await prisma.question.update({
+        where: {
+          id: question.id,
+        },
+        data: {
+          ...dataToUpdate,
+          updated_at: updateDate,
+        },
+        select: {
+          User_id: false,
+          id: true,
+          created_at: true,
+          updated_at: true,
+          content: true,
+          is_public: true,
+          has_multiple_choice: true,
+          indication: true,
+          User: {
+            select: {
+              LastName: true,
+              FirstName: true,
+              mail: true,
+              Role: {
+                select: {
+                  Name: true,
+                },
+              },
+            },
+          },
+          Question_has_Response: true,
+        },
+      });
+      res.status(200).json({
+        message: `question with id : ${id} correctly updated`,
+        isUpdated: true,
+        questionBeforeUpdate: { ...question },
+        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
+        questionAfterUpdate: {
+          ...updatedQuestion,
+        },
+      });
+    } else {
+      res.status(404).json({
+        message: `question with id : ${id} does not exist`,
+        isUpdated: false,
+      });
+    }
+  } catch (error) {
+    console.error(next);
+    next(error);
+  }
+}
 
 module.exports = {
   handleCreateQuestion,
   handleGetAllQuestions,
   handleGetUniqueQuestion,
   handleDeleteQuestion,
-  // handleUpdateQuestion,
+  handleUpdateQuestion,
 };
