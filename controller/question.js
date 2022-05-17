@@ -1,5 +1,6 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
+const { category_has_Question } = require('../helpers/prismaClient');
 
 async function handleCreateQuestion(req, res, next) {
   try {
@@ -21,13 +22,41 @@ async function handleCreateQuestion(req, res, next) {
     next(error);
   }
 }
-// async function handleGetAllQuestions(req, res, next) {
-//   try {
-//   } catch (error) {
-//     console.error(next);
-//     next(error);
-//   }
-// }
+async function handleGetAllQuestions(req, res, next) {
+  try {
+    const listOfQuestions = await prisma.question.findMany({
+      select: {
+        User_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        content: true,
+        is_public: true,
+        has_multiple_choice: true,
+        indication: true,
+        User: {
+          select: {
+            LastName: true,
+            FirstName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+        Category_has_Question: true,
+        Estimate_has_Question: true,
+        Question_has_Response: true,
+      },
+    });
+    res.status(200).json(listOfQuestions);
+  } catch (error) {
+    console.error(next);
+    next(error);
+  }
+}
 // async function handleGetUniqueQuestion(req, res, next) {
 //   try {
 //   } catch (error) {
@@ -52,7 +81,7 @@ async function handleCreateQuestion(req, res, next) {
 
 module.exports = {
   handleCreateQuestion,
-  // handleGetAllQuestions,
+  handleGetAllQuestions,
   // handleGetUniqueQuestion,
   // handleDeleteQuestion,
   // handleUpdateQuestion,
