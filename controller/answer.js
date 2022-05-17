@@ -101,13 +101,56 @@ async function handleGetUniqueAnswer(req, res, next) {
   }
 }
 
-// async function handleDeleteAnswer(req, res, next) {
-//   try {
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// }
+async function handleDeleteAnswer(req, res, next) {
+  try {
+    const { id } = req.params;
+    const answer = await prisma.answer.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        id: true,
+        User_id: false,
+        created_at: true,
+        content: true,
+        price: true,
+        updated_at: true,
+        modified_by: true,
+        User: {
+          select: {
+            LastName: true,
+            FirstName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (answer) {
+      await prisma.answer.delete({
+        where: { id: answer.id },
+      });
+      res.status(200).json({
+        message: `answer with id : ${id} correctly deleted`,
+        answer: { ...answer },
+        isDeleted: true,
+      });
+    } else {
+      res.status(404).json({
+        message: `answer with id : ${id} does not exist`,
+        isDeleted: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
 // async function handleUpdateAnswer(req, res, next) {
 //   try {
 //   } catch (error) {
@@ -120,6 +163,6 @@ module.exports = {
   handleCreateAnswer,
   handleGetAllAnswers,
   handleGetUniqueAnswer,
-  // handleDeleteAnswer,
+  handleDeleteAnswer,
   // handleUpdateAnswer,
 };
