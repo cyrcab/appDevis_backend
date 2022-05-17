@@ -29,13 +29,38 @@ async function handleCreateAnswer(req, res, next) {
   }
 }
 
-// async function handleGetAllAnswers(req, res, next) {
-//   try {
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// }
+async function handleGetAllAnswers(req, res, next) {
+  try {
+    const listOfAnswers = await prisma.answer.findMany({
+      select: {
+        id: true,
+        User_id: false,
+        created_at: true,
+        content: true,
+        price: true,
+        updated_at: true,
+        modified_by: true,
+        User: {
+          select: {
+            LastName: true,
+            FirstName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res.status(200).json(listOfAnswers);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
 // async function handleGetUniqueAnswer(req, res, next) {
 //   try {
 //   } catch (error) {
@@ -60,7 +85,7 @@ async function handleCreateAnswer(req, res, next) {
 
 module.exports = {
   handleCreateAnswer,
-  // handleGetAllAnswers,
+  handleGetAllAnswers,
   // handleGetUniqueAnswer,
   // handleDeleteAnswer,
   // handleUpdateAnswer,
