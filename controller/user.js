@@ -1,6 +1,6 @@
 const prisma = require('../helpers/prismaClient.js');
 const formatDate = require('../helpers/formatDate');
-const generateToken = require('../services/auth');
+const { generateToken } = require('../services/auth');
 const { hashPassword, verifyPassword } = require('../services/hashPassword');
 
 async function getAllUsers(req, res, next) {
@@ -67,6 +67,31 @@ async function getUniqueUser(req, res, next) {
 
 async function loginUser(req, res, next) {
   try {
+    const { mail } = req.body;
+    const userExist = await prisma.user.findUnique({
+      where: {
+        mail: mail,
+      },
+    });
+    if (userExist) {
+      const isVerifiedPass = await verifyPassword(req.body.password, userExist.password);
+      if (isVerifiedPass) {
+        const token = generateToken(userExist);
+        delete userExist.password;
+        res
+          .status(201)
+          .cookie('acces-token', token, { httpOnly: true })
+          .json({
+            message: 'User connected',
+            isConnected: true,
+            ...userExist,
+          });
+      } else {
+        res.status(401).json({ message: 'Incorrect password', isConnected: false });
+      }
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
   } catch (error) {
     console.error(error);
     next(error);
