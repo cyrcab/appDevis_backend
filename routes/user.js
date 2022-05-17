@@ -1,17 +1,18 @@
 const userRouter = require('express').Router();
 const {
-  handleCreateUser,
-  handleGetAllUsers,
-  handleGetUniqueUser,
-  handleDeleteUser,
-  handleUpdateUser,
+  createUser,
+  getAllUsers,
+  getUniqueUser,
+  deleteUser,
+  updateUser,
+  loginUser,
 } = require('../controller/user');
 
-userRouter.post('/', handleCreateUser);
-userRouter.post('/login', handleCreateUser);
-userRouter.get('/', handleGetAllUsers);
-userRouter.get('/:id', handleGetUniqueUser);
-userRouter.delete('/:id', handleDeleteUser);
-userRouter.put('/:id', handleUpdateUser);
+userRouter.post('/', createUser);
+userRouter.post('/login', loginUser);
+userRouter.get('/', getAllUsers);
+userRouter.get('/:id', getUniqueUser);
+userRouter.delete('/:id', deleteUser);
+userRouter.put('/:id', updateUser);
 
 module.exports = userRouter;

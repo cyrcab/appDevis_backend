@@ -1,7 +1,8 @@
 const prisma = require('../helpers/prismaClient.js');
 const formatDate = require('../helpers/formatDate');
+const generateToken = require('../services/auth');
 
-async function handleGetAllUsers(req, res, next) {
+async function getAllUsers(req, res, next) {
   try {
     const listOfUsers = await prisma.user.findMany();
     res.json(listOfUsers).status(200);
@@ -11,7 +12,7 @@ async function handleGetAllUsers(req, res, next) {
   }
 }
 
-async function handleGetUniqueUser(req, res, next) {
+async function getUniqueUser(req, res, next) {
   try {
     const { id } = req.params;
     const user = await prisma.user.findUnique({
@@ -20,6 +21,7 @@ async function handleGetUniqueUser(req, res, next) {
       },
     });
     if (user) {
+      generateToken(user);
       res.status(200).json({ user, message: 'user found', isFound: true });
     } else {
       res.status(404).json({ message: `no user found with id : ${id}`, isFound: false });
@@ -30,7 +32,9 @@ async function handleGetUniqueUser(req, res, next) {
   }
 }
 
-async function handleCreateUser(req, res, next) {
+async function loginUser(req, res, next) {}
+
+async function createUser(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
     const userToCreate = await prisma.user.create({
@@ -48,7 +52,7 @@ async function handleCreateUser(req, res, next) {
     next(err);
   }
 }
-async function handleDeleteUser(req, res, next) {
+async function deleteUser(req, res, next) {
   try {
     const { id } = req.params;
     const user = await prisma.user.findUnique({
@@ -79,7 +83,7 @@ async function handleDeleteUser(req, res, next) {
     next(error);
   }
 }
-async function handleUpdateUser(req, res, next) {
+async function updateUser(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
     const { id } = req.params;
@@ -119,9 +123,10 @@ async function handleUpdateUser(req, res, next) {
 }
 
 module.exports = {
-  handleCreateUser,
-  handleGetAllUsers,
-  handleGetUniqueUser,
-  handleDeleteUser,
-  handleUpdateUser,
+  createUser,
+  getAllUsers,
+  getUniqueUser,
+  deleteUser,
+  updateUser,
+  loginUser,
 };
