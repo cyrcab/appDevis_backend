@@ -12,7 +12,7 @@ async function handleCreateOffer(req, res, next) {
     });
     res.status(201).json({ offerToCreate, message: 'offer created with succes', isCreated: true });
   } catch (error) {
-    console.next(error);
+    console.error(error);
     if (error) {
       res.status(400).json({ message: 'error when creating offer', isCreated: false });
     }
