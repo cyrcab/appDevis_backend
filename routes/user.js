@@ -8,6 +8,7 @@ const {
 } = require('../controller/user');
 
 userRouter.post('/', handleCreateUser);
+userRouter.post('/login', handleCreateUser);
 userRouter.get('/', handleGetAllUsers);
 userRouter.get('/:id', handleGetUniqueUser);
 userRouter.delete('/:id', handleDeleteUser);
