@@ -1,43 +1,49 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
 
-async function handleCreateCategory(req, res, next) {
+async function handleCreateAnswer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const categoryToCreate = await prisma.category.create({
+    const answerToCreate = await prisma.answer.create({
       data: {
         ...req.body,
         created_at: dateCreation,
       },
+      select: {
+        id: true,
+        User_id: false,
+        created_at: true,
+        content: true,
+        price: true,
+      },
     });
     res
       .status(201)
-      .json({ categoryToCreate, message: 'category created with succes', isCreated: true });
+      .json({ answerToCreate, message: 'answer created with succes', isCreated: true });
   } catch (error) {
     console.error(error);
     if (error) {
-      res.status(404).json({ message: 'error when creating category', isCreated: false });
+      res.status(404).json({ message: 'error when creating answer', isCreated: false });
     }
     next(error);
   }
 }
 
-async function handleGetAllCategories(req, res, next) {
+async function handleGetAllAnswers(req, res, next) {
   try {
-    const listOfCategories = await prisma.category.findMany({
+    const listOfAnswers = await prisma.answer.findMany({
       select: {
-        User_id: false,
         id: true,
+        User_id: false,
         created_at: true,
+        content: true,
+        price: true,
         updated_at: true,
-        name: true,
         modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
         User: {
           select: {
-            FirstName: true,
             LastName: true,
+            FirstName: true,
             mail: true,
             Role: {
               select: {
@@ -48,33 +54,32 @@ async function handleGetAllCategories(req, res, next) {
         },
       },
     });
-    res.status(200).json(listOfCategories);
+    res.status(200).json(listOfAnswers);
   } catch (error) {
     console.error(error);
     next(error);
   }
 }
 
-async function handleGetUniqueCategory(req, res, next) {
+async function handleGetUniqueAnswer(req, res, next) {
   try {
     const { id } = req.params;
-    const category = await prisma.category.findUnique({
+    const answer = await prisma.answer.findUnique({
       where: {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
         id: true,
+        User_id: false,
         created_at: true,
+        content: true,
+        price: true,
         updated_at: true,
-        name: true,
         modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
         User: {
           select: {
-            FirstName: true,
             LastName: true,
+            FirstName: true,
             mail: true,
             Role: {
               select: {
@@ -85,10 +90,10 @@ async function handleGetUniqueCategory(req, res, next) {
         },
       },
     });
-    if (category) {
-      res.status(200).json({ category, message: 'category found', isFound: true });
+    if (answer) {
+      res.status(200).json({ answer, message: 'answer found', isFound: true });
     } else {
-      res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
+      res.status(404).json({ message: `no answer found with id : ${id}`, isFound: false });
     }
   } catch (error) {
     console.error(error);
@@ -96,26 +101,25 @@ async function handleGetUniqueCategory(req, res, next) {
   }
 }
 
-async function handleDeleteCategory(req, res, next) {
+async function handleDeleteAnswer(req, res, next) {
   try {
     const { id } = req.params;
-    const category = await prisma.category.findUnique({
+    const answer = await prisma.answer.findUnique({
       where: {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
         id: true,
+        User_id: false,
         created_at: true,
+        content: true,
+        price: true,
         updated_at: true,
-        name: true,
         modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
         User: {
           select: {
-            FirstName: true,
             LastName: true,
+            FirstName: true,
             mail: true,
             Role: {
               select: {
@@ -126,19 +130,18 @@ async function handleDeleteCategory(req, res, next) {
         },
       },
     });
-
-    if (category) {
-      await prisma.category.delete({
-        where: { id: category.id },
+    if (answer) {
+      await prisma.answer.delete({
+        where: { id: answer.id },
       });
       res.status(200).json({
-        message: `category with id : ${id} correctly deleted`,
-        category: { ...category },
+        message: `answer with id : ${id} correctly deleted`,
+        answer: { ...answer },
         isDeleted: true,
       });
     } else {
       res.status(404).json({
-        message: `category with id : ${id} does not exist`,
+        message: `answer with id : ${id} does not exist`,
         isDeleted: false,
       });
     }
@@ -148,28 +151,27 @@ async function handleDeleteCategory(req, res, next) {
   }
 }
 
-async function handleUpdateCategory(req, res, next) {
+async function handleUpdateAnswer(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
     const { id } = req.params;
     const dataToUpdate = req.body;
-    const category = await prisma.category.findUnique({
+    const answer = await prisma.answer.findUnique({
       where: {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
         id: true,
+        User_id: false,
         created_at: true,
+        content: true,
+        price: true,
         updated_at: true,
-        name: true,
         modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
         User: {
           select: {
-            FirstName: true,
             LastName: true,
+            FirstName: true,
             mail: true,
             Role: {
               select: {
@@ -181,26 +183,25 @@ async function handleUpdateCategory(req, res, next) {
       },
     });
 
-    if (category) {
-      const updatedCategory = await prisma.category.update({
-        where: { id: category.id },
+    if (answer) {
+      const updatedAnswer = await prisma.answer.update({
+        where: { id: answer.id },
         data: {
           ...dataToUpdate,
           updated_at: updateDate,
         },
         select: {
-          User_id: false,
           id: true,
+          User_id: false,
           created_at: true,
+          content: true,
+          price: true,
           updated_at: true,
-          name: true,
           modified_by: true,
-          Category_has_Question: true,
-          Estimate: true,
           User: {
             select: {
-              FirstName: true,
               LastName: true,
+              FirstName: true,
               mail: true,
               Role: {
                 select: {
@@ -212,17 +213,17 @@ async function handleUpdateCategory(req, res, next) {
         },
       });
       res.status(200).json({
-        message: `category with id : ${id} correctly updated`,
+        message: `answer with id : ${id} correctly updated`,
         isUpdated: true,
-        categoryBeforeUpdate: { ...category },
+        answerBeforeUpdate: { ...answer },
         datasUpdated: { ...dataToUpdate, updated_at: updateDate },
-        categoryAfterUpdate: {
-          ...updatedCategory,
+        answerAfterUpdate: {
+          ...updatedAnswer,
         },
       });
     } else {
       res.status(404).json({
-        message: `category with id : ${id} does not exist`,
+        message: `answer with id : ${id} does not exist`,
         isUpdated: false,
       });
     }
@@ -233,9 +234,9 @@ async function handleUpdateCategory(req, res, next) {
 }
 
 module.exports = {
-  handleCreateCategory,
-  handleGetAllCategories,
-  handleGetUniqueCategory,
-  handleDeleteCategory,
-  handleUpdateCategory,
+  handleCreateAnswer,
+  handleGetAllAnswers,
+  handleGetUniqueAnswer,
+  handleDeleteAnswer,
+  handleUpdateAnswer,
 };
