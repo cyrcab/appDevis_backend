@@ -151,18 +151,92 @@ async function handleDeleteAnswer(req, res, next) {
   }
 }
 
-// async function handleUpdateAnswer(req, res, next) {
-//   try {
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// }
+async function handleUpdateAnswer(req, res, next) {
+  try {
+    const updateDate = formatDate(new Date());
+    const { id } = req.params;
+    const dataToUpdate = req.body;
+    const answer = await prisma.answer.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        id: true,
+        User_id: false,
+        created_at: true,
+        content: true,
+        price: true,
+        updated_at: true,
+        modified_by: true,
+        User: {
+          select: {
+            LastName: true,
+            FirstName: true,
+            mail: true,
+            Role: {
+              select: {
+                Name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (answer) {
+      const updatedAnswer = await prisma.answer.update({
+        where: { id: answer.id },
+        data: {
+          ...dataToUpdate,
+          updated_at: updateDate,
+        },
+        select: {
+          id: true,
+          User_id: false,
+          created_at: true,
+          content: true,
+          price: true,
+          updated_at: true,
+          modified_by: true,
+          User: {
+            select: {
+              LastName: true,
+              FirstName: true,
+              mail: true,
+              Role: {
+                select: {
+                  Name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      res.status(200).json({
+        message: `answer with id : ${id} correctly updated`,
+        isUpdated: true,
+        answerBeforeUpdate: { ...answer },
+        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
+        answerAfterUpdate: {
+          ...updatedAnswer,
+        },
+      });
+    } else {
+      res.status(404).json({
+        message: `answer with id : ${id} does not exist`,
+        isUpdated: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
 
 module.exports = {
   handleCreateAnswer,
   handleGetAllAnswers,
   handleGetUniqueAnswer,
   handleDeleteAnswer,
-  // handleUpdateAnswer,
+  handleUpdateAnswer,
 };

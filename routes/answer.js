@@ -4,13 +4,13 @@ const {
   handleGetAllAnswers,
   handleGetUniqueAnswer,
   handleDeleteAnswer,
-  // handleUpdateAnswer,
+  handleUpdateAnswer,
 } = require('../controller/answer');
 
 answerRouter.post('/', handleCreateAnswer);
 answerRouter.get('/', handleGetAllAnswers);
 answerRouter.get('/:id', handleGetUniqueAnswer);
 answerRouter.delete('/:id', handleDeleteAnswer);
-// answerRouter.put('/:id', handleUpdateAnswer);
+answerRouter.put('/:id', handleUpdateAnswer);
 
 module.exports = answerRouter;
