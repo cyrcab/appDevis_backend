@@ -12,7 +12,7 @@ async function handleCreateOffer(req, res, next) {
     });
     res.status(201).json({ offerToCreate, message: 'offer created with succes', isCreated: true });
   } catch (error) {
-    console.next(error);
+    console.error(error);
     if (error) {
       res.status(400).json({ message: 'error when creating offer', isCreated: false });
     }
@@ -24,7 +24,7 @@ async function handleGetAllOffers(req, res, next) {
   try {
     const listOfOffer = await prisma.offer.findMany({
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -34,8 +34,8 @@ async function handleGetAllOffers(req, res, next) {
         price: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -61,7 +61,7 @@ async function handleGetUniqueOffer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -71,8 +71,8 @@ async function handleGetUniqueOffer(req, res, next) {
         price: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -109,7 +109,7 @@ async function handleDeleteOffer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -119,8 +119,8 @@ async function handleDeleteOffer(req, res, next) {
         price: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -164,7 +164,7 @@ async function handleUpdateOffer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        User_id: false,
+        user_id: false,
         id: true,
         created_at: true,
         updated_at: true,
@@ -174,8 +174,8 @@ async function handleUpdateOffer(req, res, next) {
         price: true,
         User: {
           select: {
-            FirstName: true,
-            LastName: true,
+            firstName: true,
+            lastName: true,
             mail: true,
             Role: {
               select: {
@@ -196,7 +196,7 @@ async function handleUpdateOffer(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          User_id: false,
+          user_id: false,
           id: true,
           created_at: true,
           updated_at: true,
@@ -206,8 +206,8 @@ async function handleUpdateOffer(req, res, next) {
           price: true,
           User: {
             select: {
-              FirstName: true,
-              LastName: true,
+              firstName: true,
+              lastName: true,
               mail: true,
               Role: {
                 select: {

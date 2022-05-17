@@ -11,7 +11,7 @@ async function handleCreateAnswer(req, res, next) {
       },
       select: {
         id: true,
-        User_id: false,
+        user_id: false,
         created_at: true,
         content: true,
         price: true,
@@ -34,7 +34,7 @@ async function handleGetAllAnswers(req, res, next) {
     const listOfAnswers = await prisma.answer.findMany({
       select: {
         id: true,
-        User_id: false,
+        user_id: false,
         created_at: true,
         content: true,
         price: true,
@@ -42,8 +42,8 @@ async function handleGetAllAnswers(req, res, next) {
         modified_by: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -70,7 +70,7 @@ async function handleGetUniqueAnswer(req, res, next) {
       },
       select: {
         id: true,
-        User_id: false,
+        user_id: false,
         created_at: true,
         content: true,
         price: true,
@@ -78,8 +78,8 @@ async function handleGetUniqueAnswer(req, res, next) {
         modified_by: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -110,7 +110,7 @@ async function handleDeleteAnswer(req, res, next) {
       },
       select: {
         id: true,
-        User_id: false,
+        user_id: false,
         created_at: true,
         content: true,
         price: true,
@@ -118,8 +118,8 @@ async function handleDeleteAnswer(req, res, next) {
         modified_by: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -162,7 +162,7 @@ async function handleUpdateAnswer(req, res, next) {
       },
       select: {
         id: true,
-        User_id: false,
+        user_id: false,
         created_at: true,
         content: true,
         price: true,
@@ -170,8 +170,8 @@ async function handleUpdateAnswer(req, res, next) {
         modified_by: true,
         User: {
           select: {
-            LastName: true,
-            FirstName: true,
+            lastName: true,
+            firstName: true,
             mail: true,
             Role: {
               select: {
@@ -192,7 +192,7 @@ async function handleUpdateAnswer(req, res, next) {
         },
         select: {
           id: true,
-          User_id: false,
+          user_id: false,
           created_at: true,
           content: true,
           price: true,
@@ -200,8 +200,8 @@ async function handleUpdateAnswer(req, res, next) {
           modified_by: true,
           User: {
             select: {
-              LastName: true,
-              FirstName: true,
+              lastName: true,
+              firstName: true,
               mail: true,
               Role: {
                 select: {
