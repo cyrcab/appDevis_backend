@@ -10,15 +10,15 @@ datasource db {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model User {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
-  FirstName             String                  @db.VarChar(45)
-  LastName              String                  @db.VarChar(45)
-  Role_id               Int
+  firstName             String                  @db.VarChar(45)
+  lastName              String                  @db.VarChar(45)
+  role_id               Int
   created_at            DateTime                @db.DateTime(0)
   updated_at            DateTime?               @db.DateTime(0)
   password              String                  @db.VarChar(255)
   mail                  String                  @unique(map: "mail_UNIQUE") @db.VarChar(45)
   modified_by           String?                 @db.VarChar(45)
-  Role                  Role                    @relation(fields: [Role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_Role")
+  Role                  Role                    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_Role")
   Answer                Answer[]
   Category              Category[]
   Estimate              Estimate[]
@@ -26,46 +26,46 @@ model User {
   User_has_Notification User_has_Notification[]
   Offer                 Offer[]
 
-  @@index([Role_id], map: "fk_User_Role_idx")
+  @@index([role_id], map: "fk_User_Role_idx")
 }
 
 model Answer {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
-  User_id               Int                     @db.UnsignedInt
+  user_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
   updated_at            DateTime?               @db.DateTime(0)
   content               String                  @db.VarChar(255)
   price                 Int
   modified_by           String?                 @db.VarChar(45)
-  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User1")
+  User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User1")
   Question_has_Response Question_has_Response[]
 
-  @@index([User_id], map: "fk_Response_User1_idx")
+  @@index([user_id], map: "fk_Response_User1_idx")
 }
 
 model Category {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
-  User_id               Int                     @db.UnsignedInt
+  user_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
   updated_at            DateTime?               @db.DateTime(0)
   name                  String                  @db.VarChar(45)
   modified_by           String?                 @db.VarChar(45)
-  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_User1")
+  User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_User1")
   Category_has_Question Category_has_Question[]
   Estimate              Estimate[]
 
-  @@index([User_id], map: "fk_Category_User1_idx")
+  @@index([user_id], map: "fk_Category_User1_idx")
 }
 
 model Category_has_Question {
-  Category_id Int      @db.UnsignedInt
-  Question_id Int      @db.UnsignedInt
-  Category    Category @relation(fields: [Category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_has_Question_Category1")
-  Question    Question @relation(fields: [Question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_has_Question_Question1")
+  category_id Int      @db.UnsignedInt
+  question_id Int      @db.UnsignedInt
+  Category    Category @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_has_Question_Category1")
+  Question    Question @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_has_Question_Question1")
 
-  @@id([Category_id, Question_id])
-  @@index([Category_id], map: "fk_Category_has_Question_Category1_idx")
-  @@index([Question_id], map: "fk_Category_has_Question_Question1_idx")
+  @@id([category_id, question_id])
+  @@index([category_id], map: "fk_Category_has_Question_Category1_idx")
+  @@index([question_id], map: "fk_Category_has_Question_Question1_idx")
 }
 
 model Customer {
@@ -81,50 +81,50 @@ model Customer {
 
 model Offer {
   id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  User_id     Int       @db.UnsignedInt
+  user_id     Int       @db.UnsignedInt
   created_at  DateTime  @db.DateTime(0)
   updated_at  DateTime? @db.DateTime(0)
   modified_by String?   @db.VarChar(45)
   description String?   @db.LongText()
   name        String    @db.VarChar(45)
   price       Int       @db.UnsignedInt
-  User        User      @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Offer_User1")
+  User        User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Offer_User1")
 
 
-  @@index([User_id], map: "fk_Offer_User1_idx")
+  @@index([user_id], map: "fk_Offer_User1_idx")
 }
 
 model Estimate {
   id                    Int                     @default(autoincrement()) @db.UnsignedInt
-  User_id               Int                     @db.UnsignedInt
-  Category_id           Int                     @db.UnsignedInt
-  Offer_id              Int                     @db.UnsignedInt
-  Offer_User_id         Int                     @db.UnsignedInt
-  Offer_Response_id     Int                     @db.UnsignedInt
+  user_id               Int                     @db.UnsignedInt
+  category_id           Int                     @db.UnsignedInt
+  offer_id              Int                     @db.UnsignedInt
+  offer_user_id         Int                     @db.UnsignedInt
+  offer_response_id     Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
   price                 DateTime                @db.DateTime(0)
   customer_id           Int                     @db.UnsignedInt
-  Category              Category                @relation(fields: [Category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_Category1")
-  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User1")
+  Category              Category                @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_Category1")
+  User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User1")
   Customer              Customer                @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_customer1")
   Estimate_has_Question Estimate_has_Question[]
 
   @@id([id, customer_id])
-  @@index([Category_id], map: "fk_Estimate_Category1_idx")
-  @@index([Offer_id, Offer_User_id, Offer_Response_id], map: "fk_Estimate_Offer1_idx")
-  @@index([User_id], map: "fk_Estimate_User1_idx")
+  @@index([category_id], map: "fk_Estimate_Category1_idx")
+  @@index([offer_id, offer_user_id, offer_response_id], map: "fk_Estimate_Offer1_idx")
+  @@index([user_id], map: "fk_Estimate_User1_idx")
   @@index([customer_id], map: "fk_Estimate_customer1_idx")
 }
 
 model Estimate_has_Question {
-  Estimate_id Int      @db.UnsignedInt
-  Question_id Int      @db.UnsignedInt
-  Estimate    Estimate @relation(fields: [Estimate_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_has_Question_Estimate1")
-  Question    Question @relation(fields: [Question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_has_Question_Question1")
+  estimate_id Int      @db.UnsignedInt
+  question_id Int      @db.UnsignedInt
+  Estimate    Estimate @relation(fields: [estimate_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_has_Question_Estimate1")
+  Question    Question @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_has_Question_Question1")
 
-  @@id([Estimate_id, Question_id])
-  @@index([Estimate_id], map: "fk_Estimate_has_Question_Estimate1_idx")
-  @@index([Question_id], map: "fk_Estimate_has_Question_Question1_idx")
+  @@id([estimate_id, question_id])
+  @@index([estimate_id], map: "fk_Estimate_has_Question_Estimate1_idx")
+  @@index([question_id], map: "fk_Estimate_has_Question_Question1_idx")
 }
 
 model Notification {
@@ -136,7 +136,7 @@ model Notification {
 
 model Question {
   id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
-  User_id               Int                     @db.UnsignedInt
+  user_id               Int                     @db.UnsignedInt
   created_at            DateTime                @db.DateTime(0)
   updated_at            DateTime?               @db.DateTime(0)
   is_public             Boolean                 @db.TinyInt
@@ -144,23 +144,23 @@ model Question {
   indication            String?                 @db.VarChar(255)
   modified_by           String?                 @db.VarChar(45)
   has_multiple_choice   Boolean                 @db.TinyInt
-  User                  User                    @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User1")
+  User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User1")
   Category_has_Question Category_has_Question[]
   Estimate_has_Question Estimate_has_Question[]
   Question_has_Response Question_has_Response[]
 
-  @@index([User_id], map: "fk_Question_User1_idx")
+  @@index([user_id], map: "fk_Question_User1_idx")
 }
 
 model Question_has_Response {
-  Question_id Int      @db.UnsignedInt
-  Answer_id   Int      @db.UnsignedInt
-  Answer      Answer   @relation(fields: [Answer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_has_Response_Response1")
-  Question    Question @relation(fields: [Question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_has_Response_Question1")
+  question_id Int      @db.UnsignedInt
+  answer_id   Int      @db.UnsignedInt
+  Answer      Answer   @relation(fields: [answer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_has_Response_Response1")
+  Question    Question @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_has_Response_Question1")
 
-  @@id([Question_id, Answer_id])
-  @@index([Question_id], map: "fk_Question_has_Response_Question1_idx")
-  @@index([Answer_id], map: "fk_Question_has_Response_Response1_idx")
+  @@id([question_id, answer_id])
+  @@index([question_id], map: "fk_Question_has_Response_Question1_idx")
+  @@index([answer_id], map: "fk_Question_has_Response_Response1_idx")
 }
 
 model Role {
@@ -170,12 +170,12 @@ model Role {
 }
 
 model User_has_Notification {
-  User_id         Int          @db.UnsignedInt
-  Notification_id Int          @db.UnsignedInt
-  Notification    Notification @relation(fields: [Notification_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_has_Notification_Notification1")
-  User            User         @relation(fields: [User_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_has_Notification_User1")
+  user_id         Int          @db.UnsignedInt
+  notification_id Int          @db.UnsignedInt
+  Notification    Notification @relation(fields: [notification_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_has_Notification_Notification1")
+  User            User         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_has_Notification_User1")
 
-  @@id([User_id, Notification_id])
-  @@index([Notification_id], map: "fk_User_has_Notification_Notification1_idx")
-  @@index([User_id], map: "fk_User_has_Notification_User1_idx")
+  @@id([user_id, notification_id])
+  @@index([notification_id], map: "fk_User_has_Notification_Notification1_idx")
+  @@index([user_id], map: "fk_User_has_Notification_User1_idx")
 }
