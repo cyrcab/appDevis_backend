@@ -11,7 +11,7 @@ const answerCreateSchema = Joi.object({
 });
 
 const answerUpdateSchema = Joi.object({
-  user_id: Joi.number().required(),
+  user_id: Joi.number(),
   created_at: Joi.date(),
   updated_at: Joi.date(),
   content: Joi.string().max(400),
