@@ -1,6 +1,27 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
 
+const defaultSelectOption = {
+  id: true,
+  user_id: false,
+  created_at: true,
+  content: true,
+  price: true,
+  has_multiple_choice: true,
+};
+const userInfo = {
+  select: {
+    lastName: true,
+    firstName: true,
+    mail: true,
+    Role: {
+      select: {
+        Name: true,
+      },
+    },
+  },
+};
+
 async function handleCreateAnswer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
@@ -10,11 +31,7 @@ async function handleCreateAnswer(req, res, next) {
         created_at: dateCreation,
       },
       select: {
-        id: true,
-        user_id: false,
-        created_at: true,
-        content: true,
-        price: true,
+        ...defaultSelectOption,
       },
     });
     res
@@ -33,25 +50,10 @@ async function handleGetAllAnswers(req, res, next) {
   try {
     const listOfAnswers = await prisma.answer.findMany({
       select: {
-        id: true,
-        user_id: false,
-        created_at: true,
-        content: true,
-        price: true,
+        ...defaultSelectOption,
         updated_at: true,
         modified_by: true,
-        User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
-        },
+        User: { ...userInfo },
       },
     });
     res.status(200).json(listOfAnswers);
@@ -69,25 +71,10 @@ async function handleGetUniqueAnswer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        id: true,
-        user_id: false,
-        created_at: true,
-        content: true,
-        price: true,
+        ...defaultSelectOption,
         updated_at: true,
         modified_by: true,
-        User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
-        },
+        User: { ...userInfo },
       },
     });
     if (answer) {
@@ -109,25 +96,10 @@ async function handleDeleteAnswer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        id: true,
-        user_id: false,
-        created_at: true,
-        content: true,
-        price: true,
+        ...defaultSelectOption,
         updated_at: true,
         modified_by: true,
-        User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
-        },
+        User: { ...userInfo },
       },
     });
     if (answer) {
@@ -161,25 +133,10 @@ async function handleUpdateAnswer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        id: true,
-        user_id: false,
-        created_at: true,
-        content: true,
-        price: true,
+        ...defaultSelectOption,
         updated_at: true,
         modified_by: true,
-        User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
-        },
+        User: { ...userInfo },
       },
     });
 
@@ -191,25 +148,10 @@ async function handleUpdateAnswer(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          id: true,
-          user_id: false,
-          created_at: true,
-          content: true,
-          price: true,
+          ...defaultSelectOption,
           updated_at: true,
           modified_by: true,
-          User: {
-            select: {
-              lastName: true,
-              firstName: true,
-              mail: true,
-              Role: {
-                select: {
-                  Name: true,
-                },
-              },
-            },
-          },
+          User: { ...userInfo },
         },
       });
       res.status(200).json({

@@ -6,11 +6,15 @@ const {
   handleDeleteCategory,
   handleUpdateCategory,
 } = require('../controller/category');
+const {
+  categoryCreationValidation,
+  categoryUpdateValidation,
+} = require('../middlewares/validation/category');
 
-categoryRouter.post('/', handleCreateCategory);
+categoryRouter.post('/', [categoryCreationValidation, handleCreateCategory]);
 categoryRouter.get('/', handleGetAllCategories);
 categoryRouter.get('/:id', handleGetUniqueCategory);
 categoryRouter.delete('/:id', handleDeleteCategory);
-categoryRouter.put('/:id', handleUpdateCategory);
+categoryRouter.put('/:id', [categoryUpdateValidation, handleUpdateCategory]);
 
 module.exports = categoryRouter;
