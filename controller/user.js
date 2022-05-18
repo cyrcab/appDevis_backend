@@ -3,24 +3,28 @@ const formatDate = require('../helpers/formatDate');
 const { generateToken } = require('../services/auth');
 const { hashPassword, verifyPassword } = require('../services/hashPassword');
 
+const defaultSelectOption = {
+  password: false,
+  id: true,
+  firstName: true,
+  lastName: true,
+  role_id: true,
+  created_at: true,
+  updated_at: true,
+  mail: true,
+  Role: {
+    select: {
+      Name: true,
+    },
+  },
+  modified_by: true,
+};
+
 async function getAllUsers(req, res, next) {
   try {
     const listOfUsers = await prisma.user.findMany({
       select: {
-        password: false,
-        id: true,
-        firstName: true,
-        lastName: true,
-        role_id: true,
-        created_at: true,
-        updated_at: true,
-        mail: true,
-        Role: {
-          select: {
-            Name: true,
-          },
-        },
-        modified_by: true,
+        ...defaultSelectOption,
       },
     });
     res.json(listOfUsers).status(200);
@@ -38,20 +42,7 @@ async function getUniqueUser(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        password: false,
-        id: true,
-        firstName: true,
-        lastName: true,
-        role_id: true,
-        created_at: true,
-        updated_at: true,
-        mail: true,
-        Role: {
-          select: {
-            Name: true,
-          },
-        },
-        modified_by: true,
+        ...defaultSelectOption,
       },
     });
     if (user) {
@@ -119,18 +110,7 @@ async function createUser(req, res, next) {
           password: hashedPassword,
         },
         select: {
-          password: false,
-          id: true,
-          firstName: true,
-          lastName: true,
-          role_id: true,
-          created_at: true,
-          mail: true,
-          Role: {
-            select: {
-              Name: true,
-            },
-          },
+          ...defaultSelectOption,
         },
       });
       res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
@@ -151,20 +131,7 @@ async function deleteUser(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        password: false,
-        id: true,
-        firstName: true,
-        lastName: true,
-        role_id: true,
-        created_at: true,
-        updated_at: true,
-        mail: true,
-        Role: {
-          select: {
-            Name: true,
-          },
-        },
-        modified_by: true,
+        ...defaultSelectOption,
       },
     });
 
@@ -200,20 +167,7 @@ async function updateUser(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        password: false,
-        id: true,
-        firstName: true,
-        lastName: true,
-        role_id: true,
-        created_at: true,
-        updated_at: true,
-        mail: true,
-        Role: {
-          select: {
-            Name: true,
-          },
-        },
-        modified_by: true,
+        ...defaultSelectOption,
       },
     });
 
@@ -227,20 +181,7 @@ async function updateUser(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          password: false,
-          id: true,
-          firstName: true,
-          lastName: true,
-          role_id: true,
-          created_at: true,
-          updated_at: true,
-          mail: true,
-          Role: {
-            select: {
-              Name: true,
-            },
-          },
-          modified_by: true,
+          ...defaultSelectOption,
         },
       });
       res.status(200).json({
