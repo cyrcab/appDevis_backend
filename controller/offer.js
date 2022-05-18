@@ -1,6 +1,29 @@
 const prisma = require('../helpers/prismaClient.js');
 const formatDate = require('../helpers/formatDate');
 
+const defaultSelectOption = {
+  user_id: false,
+  id: true,
+  created_at: true,
+  updated_at: true,
+  name: true,
+  modified_by: true,
+  description: true,
+  price: true,
+};
+const userInfo = {
+  select: {
+    lastName: true,
+    firstName: true,
+    mail: true,
+    Role: {
+      select: {
+        Name: true,
+      },
+    },
+  },
+};
+
 async function handleCreateOffer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
@@ -24,25 +47,9 @@ async function handleGetAllOffers(req, res, next) {
   try {
     const listOfOffer = await prisma.offer.findMany({
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        description: true,
-        price: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -61,25 +68,9 @@ async function handleGetUniqueOffer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        description: true,
-        price: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -109,25 +100,9 @@ async function handleDeleteOffer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        description: true,
-        price: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -164,25 +139,9 @@ async function handleUpdateOffer(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        description: true,
-        price: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -196,25 +155,9 @@ async function handleUpdateOffer(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          user_id: false,
-          id: true,
-          created_at: true,
-          updated_at: true,
-          name: true,
-          modified_by: true,
-          description: true,
-          price: true,
+          ...defaultSelectOption,
           User: {
-            select: {
-              firstName: true,
-              lastName: true,
-              mail: true,
-              Role: {
-                select: {
-                  Name: true,
-                },
-              },
-            },
+            ...userInfo,
           },
         },
       });
