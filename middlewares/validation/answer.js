@@ -1,28 +1,28 @@
 const Joi = require('joi');
 
 const answerCreateSchema = Joi.object({
+  user_id: Joi.number().required(),
   created_at: Joi.date(),
   updated_at: Joi.date(),
-  user_id: Joi.number().required(),
+  content: Joi.string().max(400).required(),
+  price: Joi.number().min(1).required(),
+  has_multiple_choice: Joi.boolean().required(),
   modified_by: Joi.string(),
-  content: Joi.string().max(400),
-  price: Joi.number().min(1)
 });
 
 const answerUpdateSchema = Joi.object({
-  firstName: Joi.string().max(45),
-  lastName: Joi.string().max(45),
-  role_id: Joi.number(),
+  user_id: Joi.number().required(),
   created_at: Joi.date(),
   updated_at: Joi.date(),
-  password: Joi.string().max(255).min(6),
-  mail: Joi.string().max(255).email(),
+  content: Joi.string().max(400),
+  price: Joi.number().min(1),
+  has_multiple_choice: Joi.boolean(),
   modified_by: Joi.string(),
 });
 
 const answerCreationValidation = (req, res, next) => {
   const payload = req.body;
-  const { error } = userCreateSchema.validate(payload, {
+  const { error } = answerCreateSchema.validate(payload, {
     abortEarly: false,
   });
   if (error) {
@@ -35,7 +35,7 @@ const answerCreationValidation = (req, res, next) => {
 
 const answerUpdateValidation = (req, res, next) => {
   const payload = req.body;
-  const { error } = userUpdateSchema.validate(payload, {
+  const { error } = answerUpdateSchema.validate(payload, {
     abortEarly: false,
   });
   if (error) {
