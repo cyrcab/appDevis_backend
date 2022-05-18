@@ -1,6 +1,29 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
 
+const defaultSelectOption = {
+  user_id: false,
+  id: true,
+  created_at: true,
+  updated_at: true,
+  name: true,
+  modified_by: true,
+  Category_has_Question: true,
+  Estimate: true,
+};
+const userInfo = {
+  select: {
+    lastName: true,
+    firstName: true,
+    mail: true,
+    Role: {
+      select: {
+        Name: true,
+      },
+    },
+  },
+};
+
 async function handleCreateCategory(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
@@ -26,25 +49,9 @@ async function handleGetAllCategories(req, res, next) {
   try {
     const listOfCategories = await prisma.category.findMany({
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -63,25 +70,9 @@ async function handleGetUniqueCategory(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -104,25 +95,9 @@ async function handleDeleteCategory(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -158,25 +133,9 @@ async function handleUpdateCategory(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        name: true,
-        modified_by: true,
-        Category_has_Question: true,
-        Estimate: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            firstName: true,
-            lastName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
       },
     });
@@ -189,25 +148,9 @@ async function handleUpdateCategory(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          user_id: false,
-          id: true,
-          created_at: true,
-          updated_at: true,
-          name: true,
-          modified_by: true,
-          Category_has_Question: true,
-          Estimate: true,
+          ...defaultSelectOption,
           User: {
-            select: {
-              firstName: true,
-              lastName: true,
-              mail: true,
-              Role: {
-                select: {
-                  Name: true,
-                },
-              },
-            },
+            ...userInfo,
           },
         },
       });
