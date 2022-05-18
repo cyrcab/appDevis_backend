@@ -1,6 +1,29 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
 
+const defaultSelectOption = {
+  user_id: false,
+  id: true,
+  created_at: true,
+  updated_at: true,
+  content: true,
+  is_public: true,
+  indication: true,
+  Question_has_Response: true,
+};
+const userInfo = {
+  select: {
+    lastName: true,
+    firstName: true,
+    mail: true,
+    Role: {
+      select: {
+        Name: true,
+      },
+    },
+  },
+};
+
 async function handleCreateQuestion(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
@@ -25,25 +48,9 @@ async function handleGetAllQuestions(req, res, next) {
   try {
     const listOfQuestions = await prisma.question.findMany({
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        content: true,
-        is_public: true,
-        has_multiple_choice: true,
-        indication: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
         Question_has_Response: true,
       },
@@ -62,27 +69,10 @@ async function handleGetUniqueQuestion(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        content: true,
-        is_public: true,
-        has_multiple_choice: true,
-        indication: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
-        Question_has_Response: true,
       },
     });
     if (question) {
@@ -103,27 +93,10 @@ async function handleDeleteQuestion(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        content: true,
-        is_public: true,
-        has_multiple_choice: true,
-        indication: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
-        Question_has_Response: true,
       },
     });
     if (question) {
@@ -156,27 +129,10 @@ async function handleUpdateQuestion(req, res, next) {
         id: parseInt(id),
       },
       select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        content: true,
-        is_public: true,
-        has_multiple_choice: true,
-        indication: true,
+        ...defaultSelectOption,
         User: {
-          select: {
-            lastName: true,
-            firstName: true,
-            mail: true,
-            Role: {
-              select: {
-                Name: true,
-              },
-            },
-          },
+          ...userInfo,
         },
-        Question_has_Response: true,
       },
     });
     if (question) {
@@ -189,27 +145,10 @@ async function handleUpdateQuestion(req, res, next) {
           updated_at: updateDate,
         },
         select: {
-          user_id: false,
-          id: true,
-          created_at: true,
-          updated_at: true,
-          content: true,
-          is_public: true,
-          has_multiple_choice: true,
-          indication: true,
+          ...defaultSelectOption,
           User: {
-            select: {
-              lastName: true,
-              firstName: true,
-              mail: true,
-              Role: {
-                select: {
-                  Name: true,
-                },
-              },
-            },
+            ...userInfo,
           },
-          Question_has_Response: true,
         },
       });
       res.status(200).json({
