@@ -63,6 +63,10 @@ async function loginUser(req, res, next) {
       where: {
         mail: mail,
       },
+      select: {
+        ...defaultSelectOption,
+        password: true,
+      },
     });
     if (userExist) {
       const isVerifiedPass = await verifyPassword(req.body.password, userExist.password);
@@ -71,11 +75,11 @@ async function loginUser(req, res, next) {
         delete userExist.password;
         res
           .status(201)
-          .cookie('acces-token', token, { httpOnly: true })
           .json({
             message: 'User connected',
             isConnected: true,
             ...userExist,
+            userToken: token,
           });
       } else {
         res.status(401).json({ message: 'Incorrect password', isConnected: false });
