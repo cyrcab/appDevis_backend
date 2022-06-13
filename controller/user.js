@@ -120,6 +120,7 @@ async function createUser(req, res, next) {
           ...defaultSelectOption,
         },
       });
+      console.log(hashedPassword);
       res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
     }
   } catch (error) {

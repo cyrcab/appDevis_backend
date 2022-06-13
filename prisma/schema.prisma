@@ -13,7 +13,7 @@ model User {
   firstName             String                  @db.VarChar(45)
   lastName              String                  @db.VarChar(45)
   role_id               Int
-  created_at            DateTime                @db.DateTime(0)
+  created_at            DateTime?                @db.DateTime(0)
   updated_at            DateTime?               @db.DateTime(0)
   password              String                  @db.VarChar(255)
   mail                  String                  @unique(map: "mail_UNIQUE") @db.VarChar(45)
@@ -36,7 +36,6 @@ model Answer {
   updated_at            DateTime?               @db.DateTime(0)
   content               String                  @db.VarChar(255)
   price                 Int
-  has_multiple_choice   Boolean                 @default(false)
   modified_by           String?                 @db.VarChar(45)
   User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User1")
   Question_has_Response Question_has_Response[]
@@ -143,6 +142,7 @@ model Question {
   is_public             Boolean                 @db.TinyInt
   content               String                  @db.VarChar(255)
   indication            String?                 @db.VarChar(255)
+  has_multiple_choice   Boolean                 @default(false)
   modified_by           String?                 @db.VarChar(45)
   User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User1")
   Category_has_Question Category_has_Question[]

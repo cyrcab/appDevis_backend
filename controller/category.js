@@ -1,5 +1,6 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
+const { json } = require('express');
 
 const defaultSelectOption = {
   user_id: false,
@@ -83,11 +84,34 @@ async function handleGetUniqueCategory(req, res, next) {
       },
     });
     if (category) {
-      res.status(200).json({ category, message: 'category found', isFound: true });
+      res.status(200).json([...category]);
     } else {
       res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
     }
   } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+async function handleGetQuestionsForCategory(req, res, next) {
+  try {
+    const { id } = req.params;
+    const questions = await prisma.Category_has_Question.findMany({
+      where: {
+        category_id: parseInt(id),
+      },
+      include: {
+        Question: true,
+      },
+    });
+    if (questions) {
+      res.status(200).json(questions);
+    } else {
+      res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
+    }
+  } catch (error) {
+    res.status(500).json({ error });
     console.error(error);
     next(error);
   }
@@ -187,4 +211,5 @@ module.exports = {
   handleGetUniqueCategory,
   handleDeleteCategory,
   handleUpdateCategory,
+  handleGetQuestionsForCategory,
 };
