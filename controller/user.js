@@ -25,6 +25,11 @@ async function getAllUsers(req, res, next) {
     const listOfUsers = await prisma.user.findMany({
       select: {
         ...defaultSelectOption,
+        _count: {
+          select: {
+            Estimate: true,
+          },
+        },
       },
     });
     res.json(listOfUsers).status(200);
@@ -73,14 +78,12 @@ async function loginUser(req, res, next) {
       if (isVerifiedPass) {
         const token = generateToken(userExist);
         delete userExist.password;
-        res
-          .status(201)
-          .json({
-            message: 'User connected',
-            isConnected: true,
-            ...userExist,
-            userToken: token,
-          });
+        res.status(201).json({
+          message: 'User connected',
+          isConnected: true,
+          ...userExist,
+          userToken: token,
+        });
       } else {
         res.status(401).json({ message: 'Incorrect password', isConnected: false });
       }

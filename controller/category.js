@@ -8,7 +8,6 @@ const defaultSelectOption = {
   updated_at: true,
   name: true,
   modified_by: true,
-  Category_has_Question: true,
   Estimate: true,
 };
 const userInfo = {
@@ -50,6 +49,13 @@ async function handleGetAllCategories(req, res, next) {
     const listOfCategories = await prisma.category.findMany({
       select: {
         ...defaultSelectOption,
+        Category_has_Question: {
+          select: {
+            Question: true,
+            question_id: true,
+            category_id: true,
+          },
+        },
         User: {
           ...userInfo,
         },
