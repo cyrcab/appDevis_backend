@@ -37,7 +37,6 @@ async function handleCreateQuestion(req, res, next) {
       .status(201)
       .json({ questionToCreate, message: 'question created with succes', isCreated: true });
   } catch (error) {
-    console.error(next);
     if (error) {
       res.status(404).json({ message: 'error when creating question', isCreated: false });
     }

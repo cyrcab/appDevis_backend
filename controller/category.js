@@ -1,6 +1,5 @@
 const prisma = require('../helpers/prismaClient');
 const formatDate = require('../helpers/formatDate');
-const { json } = require('express');
 
 const defaultSelectOption = {
   user_id: false,
@@ -35,7 +34,7 @@ async function handleCreateCategory(req, res, next) {
     });
     res
       .status(201)
-      .json({ categoryToCreate, message: 'category created with succes', isCreated: true });
+      .json({ ...categoryToCreate, message: 'category created with succes', isCreated: true });
   } catch (error) {
     console.error(error);
     if (error) {
@@ -84,7 +83,7 @@ async function handleGetUniqueCategory(req, res, next) {
       },
     });
     if (category) {
-      res.status(200).json([...category]);
+      res.status(200).json(category);
     } else {
       res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
     }
