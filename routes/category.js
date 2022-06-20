@@ -5,7 +5,7 @@ const {
   handleGetUniqueCategory,
   handleDeleteCategory,
   handleUpdateCategory,
-  handleGetQuestionsForCategory
+  handleGetAllQuestionsByCategory
 } = require('../controller/category');
 const {
   categoryCreationValidation,
@@ -15,7 +15,7 @@ const {
 categoryRouter.post('/', [categoryCreationValidation, handleCreateCategory]);
 categoryRouter.get('/', handleGetAllCategories);
 categoryRouter.get('/:id', handleGetUniqueCategory);
-categoryRouter.get('/:id/questions', handleGetQuestionsForCategory);
+categoryRouter.get('/:id/questions', handleGetAllQuestionsByCategory);
 categoryRouter.delete('/:id', handleDeleteCategory);
 categoryRouter.put('/:id', [categoryUpdateValidation, handleUpdateCategory]);
 

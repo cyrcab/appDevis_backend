@@ -9,6 +9,7 @@ const defaultSelectOption = {
   name: true,
   modified_by: true,
   Estimate: true,
+  Question: true,
 };
 const userInfo = {
   select: {
@@ -49,13 +50,6 @@ async function handleGetAllCategories(req, res, next) {
     const listOfCategories = await prisma.category.findMany({
       select: {
         ...defaultSelectOption,
-        Category_has_Question: {
-          select: {
-            Question: true,
-            question_id: true,
-            category_id: true,
-          },
-        },
         User: {
           ...userInfo,
         },
@@ -93,25 +87,30 @@ async function handleGetUniqueCategory(req, res, next) {
   }
 }
 
-async function handleGetQuestionsForCategory(req, res, next) {
+async function handleGetAllQuestionsByCategory(req, res, next) {
   try {
     const { id } = req.params;
-    const questions = await prisma.Category_has_Question.findMany({
+    const listOfQuestions = await prisma.question.findMany({
       where: {
         category_id: parseInt(id),
       },
-      include: {
-        Question: true,
+      select: {
+        user_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        content: true,
+        is_public: true,
+        indication: true,
+        Answer: true,
+        User: {
+          ...userInfo,
+        },
       },
     });
-    if (questions) {
-      res.status(200).json(questions);
-    } else {
-      res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
-    }
+    res.status(200).json(listOfQuestions);
   } catch (error) {
-    res.status(500).json({ error });
-    console.error(error);
+    console.error(next);
     next(error);
   }
 }
@@ -210,5 +209,5 @@ module.exports = {
   handleGetUniqueCategory,
   handleDeleteCategory,
   handleUpdateCategory,
-  handleGetQuestionsForCategory,
+  handleGetAllQuestionsByCategory,
 };

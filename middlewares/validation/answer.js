@@ -3,20 +3,20 @@ const Joi = require('joi');
 const answerCreateSchema = Joi.object({
   user_id: Joi.number().required(),
   created_at: Joi.date(),
+  question_id: Joi.number(),
   updated_at: Joi.date(),
   content: Joi.string().max(400).required(),
-  price: Joi.number().min(1).required(),
-  has_multiple_choice: Joi.boolean().required(),
+  price: Joi.number(),
   modified_by: Joi.string(),
 });
 
 const answerUpdateSchema = Joi.object({
   user_id: Joi.number(),
   created_at: Joi.date(),
+  question_id: Joi.number(),
   updated_at: Joi.date(),
   content: Joi.string().max(400),
-  price: Joi.number().min(1),
-  has_multiple_choice: Joi.boolean(),
+  price: Joi.number(),
   modified_by: Joi.string(),
 });
 

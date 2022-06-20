@@ -2,6 +2,7 @@ const Joi = require('joi');
 
 const questionCreateSchema = Joi.object({
   user_id: Joi.number().required(),
+  category_id: Joi.number().required(),
   created_at: Joi.date(),
   updated_at: Joi.date(),
   has_multiple_choice: Joi.boolean(),
@@ -12,8 +13,6 @@ const questionCreateSchema = Joi.object({
 });
 
 const questionUpdateSchema = Joi.object({
-  user_id: Joi.number(),
-  created_at: Joi.date(),
   updated_at: Joi.date(),
   is_public: Joi.boolean(),
   has_multiple_choice: Joi.boolean(),
