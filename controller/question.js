@@ -9,7 +9,7 @@ const defaultSelectOption = {
   content: true,
   is_public: true,
   indication: true,
-  Question_has_Response: true,
+  Answer: true,
 };
 const userInfo = {
   select: {
@@ -37,7 +37,6 @@ async function handleCreateQuestion(req, res, next) {
       .status(201)
       .json({ questionToCreate, message: 'question created with succes', isCreated: true });
   } catch (error) {
-    console.error(next);
     if (error) {
       res.status(404).json({ message: 'error when creating question', isCreated: false });
     }
@@ -52,7 +51,6 @@ async function handleGetAllQuestions(req, res, next) {
         User: {
           ...userInfo,
         },
-        Question_has_Response: true,
       },
     });
     res.status(200).json(listOfQuestions);
@@ -61,6 +59,32 @@ async function handleGetAllQuestions(req, res, next) {
     next(error);
   }
 }
+
+async function handleGetAllAnswerbyQuestion(req, res, next) {
+  try {
+    const { id } = req.params;
+    const listOfAnswers = await prisma.answer.findMany({
+      where: {
+        question_id: parseInt(id),
+      },
+      select: {
+        id: true,
+        user_id: false,
+        created_at: true,
+        content: true,
+        price: true,
+        User: {
+          ...userInfo,
+        },
+      },
+    });
+    res.status(200).json(listOfAnswers);
+  } catch (error) {
+    console.error(next);
+    next(error);
+  }
+}
+
 async function handleGetUniqueQuestion(req, res, next) {
   try {
     const { id } = req.params;
@@ -178,4 +202,5 @@ module.exports = {
   handleGetUniqueQuestion,
   handleDeleteQuestion,
   handleUpdateQuestion,
+  handleGetAllAnswerbyQuestion,
 };

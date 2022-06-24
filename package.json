@@ -8,7 +8,7 @@
     "db:push": "npx prisma db push"
   },
   "prisma": {
-    "seed": "node prisma/seedingDb/seed.js"
+    "seed": "node prisma/seedingDb/seedingDb.js"
   },
   "dependencies": {
     "@prisma/client": "^3.14.0",
@@ -18,7 +18,7 @@
     "express-jwt": "^7.7.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
-    "prisma": "^3.14.0"
+    "prisma": "^3.15.1"
   },
   "devDependencies": {
     "dotenv": "^16.0.1",

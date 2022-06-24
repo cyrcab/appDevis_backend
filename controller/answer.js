@@ -3,11 +3,9 @@ const formatDate = require('../helpers/formatDate');
 
 const defaultSelectOption = {
   id: true,
-  user_id: false,
   created_at: true,
   content: true,
   price: true,
-  has_multiple_choice: true,
 };
 const userInfo = {
   select: {

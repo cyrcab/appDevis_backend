@@ -1,9 +1,12 @@
 const prisma = require('../../helpers/prismaClient');
-const roles = require('./roleSeed');
+const { roles, users } = require('./seeds');
 
 async function main() {
   await prisma.role.createMany({
     data: roles,
+  });
+  await prisma.user.createMany({
+    data: users,
   });
 }
 

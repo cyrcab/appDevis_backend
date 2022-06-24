@@ -2,19 +2,20 @@ const Joi = require('joi');
 
 const questionCreateSchema = Joi.object({
   user_id: Joi.number().required(),
+  category_id: Joi.number().required(),
   created_at: Joi.date(),
   updated_at: Joi.date(),
-  is_public: Joi.boolean().required(),
+  has_multiple_choice: Joi.boolean(),
+  is_public: Joi.boolean(),
   content: Joi.string().max(255).required(),
   indication: Joi.string().max(255),
   modified_by: Joi.string(),
 });
 
 const questionUpdateSchema = Joi.object({
-  user_id: Joi.number(),
-  created_at: Joi.date(),
   updated_at: Joi.date(),
   is_public: Joi.boolean(),
+  has_multiple_choice: Joi.boolean(),
   content: Joi.string().max(255),
   indication: Joi.string().max(255),
   modified_by: Joi.string(),

@@ -5,6 +5,7 @@ const {
   handleGetUniqueQuestion,
   handleDeleteQuestion,
   handleUpdateQuestion,
+  handleGetAllAnswerbyQuestion,
 } = require('../controller/question');
 const {
   questionCreationValidation,
@@ -14,6 +15,7 @@ const {
 questionRouter.post('/', [questionCreationValidation, handleCreateQuestion]);
 questionRouter.get('/', handleGetAllQuestions);
 questionRouter.get('/:id', handleGetUniqueQuestion);
+questionRouter.get('/:id/answers', handleGetAllAnswerbyQuestion);
 questionRouter.delete('/:id', handleDeleteQuestion);
 questionRouter.put('/:id', [questionUpdateValidation, handleUpdateQuestion]);
 

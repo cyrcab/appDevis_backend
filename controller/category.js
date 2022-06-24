@@ -8,8 +8,8 @@ const defaultSelectOption = {
   updated_at: true,
   name: true,
   modified_by: true,
-  Category_has_Question: true,
   Estimate: true,
+  Question: true,
 };
 const userInfo = {
   select: {
@@ -35,7 +35,7 @@ async function handleCreateCategory(req, res, next) {
     });
     res
       .status(201)
-      .json({ categoryToCreate, message: 'category created with succes', isCreated: true });
+      .json({ ...categoryToCreate, message: 'category created with succes', isCreated: true });
   } catch (error) {
     console.error(error);
     if (error) {
@@ -77,12 +77,40 @@ async function handleGetUniqueCategory(req, res, next) {
       },
     });
     if (category) {
-      res.status(200).json({ category, message: 'category found', isFound: true });
+      res.status(200).json(category);
     } else {
       res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
     }
   } catch (error) {
     console.error(error);
+    next(error);
+  }
+}
+
+async function handleGetAllQuestionsByCategory(req, res, next) {
+  try {
+    const { id } = req.params;
+    const listOfQuestions = await prisma.question.findMany({
+      where: {
+        category_id: parseInt(id),
+      },
+      select: {
+        user_id: false,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        content: true,
+        is_public: true,
+        indication: true,
+        Answer: true,
+        User: {
+          ...userInfo,
+        },
+      },
+    });
+    res.status(200).json(listOfQuestions);
+  } catch (error) {
+    console.error(next);
     next(error);
   }
 }
@@ -181,4 +209,5 @@ module.exports = {
   handleGetUniqueCategory,
   handleDeleteCategory,
   handleUpdateCategory,
+  handleGetAllQuestionsByCategory,
 };
