@@ -40,8 +40,8 @@ model Answer {
   User        User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User")
   Question    Question? @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Response_Question")
 
-  @@index([user_id], map: "fk_Response_User_idx")
   Estimate_has_Answer Estimate_has_Answer[]
+  @@index([user_id], map: "fk_Response_User_idx")
 }
 
 model Category {
@@ -59,27 +59,28 @@ model Category {
 }
 
 model Customer {
-  id        Int        @id @default(autoincrement()) @db.UnsignedInt
-  lastname  String     @db.VarChar(255)
-  firstname String     @db.VarChar(255)
-  company   String     @db.VarChar(255)
-  phone     String     @db.VarChar(255)
-  mail      String     @db.VarChar(255)
-  Estimate  Estimate[]
+  id         Int        @id @default(autoincrement()) @db.UnsignedInt
+  lastname   String     @db.VarChar(255)
+  firstname  String     @db.VarChar(255)
+  company    String     @db.VarChar(255)
+  phone      String     @db.VarChar(255)
+  mail       String     @db.VarChar(255)
+  created_at DateTime   @db.DateTime(0)
+  Estimate   Estimate[]
 }
 
 model Estimate {
-  id                    Int                     @default(autoincrement()) @db.UnsignedInt
-  user_id               Int                     @db.UnsignedInt
-  category_id           Int                     @db.UnsignedInt
-  created_at            DateTime                @db.DateTime(0)
-  price                 DateTime                @db.DateTime(0)
-  customer_id           Int                     @db.UnsignedInt
-  type                  String                  @db.VarChar(255)
-  Category              Category                @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_Category")
-  User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User")
-  Customer              Customer                @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_customer")
-  Estimate_has_Answer   Estimate_has_Answer[]
+  id                  Int                   @default(autoincrement()) @db.UnsignedInt
+  user_id             Int                   @db.UnsignedInt
+  category_id         Int                   @db.UnsignedInt
+  created_at          DateTime              @db.DateTime(0)
+  price               DateTime              @db.DateTime(0)
+  customer_id         Int                   @db.UnsignedInt
+  type                String                @db.VarChar(255)
+  Category            Category              @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_Category")
+  User                User                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User")
+  Customer            Customer              @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_customer")
+  Estimate_has_Answer Estimate_has_Answer[]
 
   @@id([id, customer_id])
   @@index([category_id], map: "fk_Estimate_Category_idx")
@@ -106,19 +107,19 @@ model Notification {
 }
 
 model Question {
-  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
-  user_id               Int                     @db.UnsignedInt
-  category_id           Int                     @db.UnsignedInt
-  created_at            DateTime                @db.DateTime(0)
-  updated_at            DateTime?               @db.DateTime(0)
-  is_public             Boolean                 @db.TinyInt
-  content               String                  @db.VarChar(255)
-  indication            String?                 @db.VarChar(255)
-  has_multiple_choice   Boolean                 @db.TinyInt
-  modified_by           String?                 @db.VarChar(255)
-  User                  User                    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User")
-  Category              Category                @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Question_Category")
-  Answer                Answer[]
+  id                  Int       @id @default(autoincrement()) @db.UnsignedInt
+  user_id             Int       @db.UnsignedInt
+  category_id         Int       @db.UnsignedInt
+  created_at          DateTime  @db.DateTime(0)
+  updated_at          DateTime? @db.DateTime(0)
+  is_public           Boolean   @db.TinyInt
+  content             String    @db.VarChar(255)
+  indication          String?   @db.VarChar(255)
+  has_multiple_choice Boolean   @db.TinyInt
+  modified_by         String?   @db.VarChar(255)
+  User                User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Question_User")
+  Category            Category  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Question_Category")
+  Answer              Answer[]
 
   @@index([user_id], map: "fk_Question_User_idx")
 }

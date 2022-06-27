@@ -1,6 +1,6 @@
 const customerRouter = require('express').Router();
-const { handleCreateCustomer } = require('../controller/category');
+const { handleCreateCustomer } = require('../controller/customer');
 
-categoryRouter.post('/', handleCreateCustomer);
+customerRouter.post('/', handleCreateCustomer);
 
 module.exports = customerRouter;
