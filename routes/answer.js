@@ -11,7 +11,7 @@ const {
   answerUpdateValidation,
 } = require('../middlewares/validation/answer');
 
-answerRouter.post('/', [answerCreationValidation, handleCreateAnswer]);
+answerRouter.post('/', handleCreateAnswer);
 answerRouter.get('/', handleGetAllAnswers);
 answerRouter.get('/:id', handleGetUniqueAnswer);
 answerRouter.delete('/:id', handleDeleteAnswer);

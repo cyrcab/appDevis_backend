@@ -23,15 +23,26 @@ const userInfo = {
 async function handleCreateAnswer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const answerToCreate = await prisma.answer.create({
-      data: {
-        ...req.body,
-        created_at: dateCreation,
-      },
-      select: {
-        ...defaultSelectOption,
-      },
-    });
+    const answerList = [...req.body];
+    console.log([...answerList]);
+    const answerToCreate =
+      req.body.constructor === Object
+        ? await prisma.answer.create({
+            data: {
+              ...req.body,
+              created_at: dateCreation,
+            },
+            select: {
+              ...defaultSelectOption,
+            },
+          })
+        : await prisma.answer.createMany({
+            data: answerList.map((answer) => ({
+              ...answer,
+              created_at: dateCreation,
+            })),
+          });
+
     res
       .status(201)
       .json({ answerToCreate, message: 'answer created with succes', isCreated: true });
