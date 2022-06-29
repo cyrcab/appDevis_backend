@@ -23,23 +23,51 @@ const userInfo = {
 async function handleCreateAnswer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const answerToCreate = await prisma.answer.create({
-      data: {
-        ...req.body,
-        created_at: dateCreation,
-      },
-      select: {
-        ...defaultSelectOption,
-      },
-    });
-    res
-      .status(201)
-      .json({ answerToCreate, message: 'answer created with succes', isCreated: true });
+    const answerList = [...req.body];
+    const answerToCreate =
+      req.body.constructor === Object
+        ? await prisma.answer.create({
+            data: {
+              ...req.body,
+              created_at: dateCreation,
+            },
+            select: {
+              ...defaultSelectOption,
+            },
+          })
+        : await prisma.answer.createMany({
+            data: answerList.map((answer) => ({
+              ...answer,
+              created_at: dateCreation,
+            })),
+          });
+
+    res.status(201).json(answerToCreate);
   } catch (error) {
     console.error(error);
     if (error) {
       res.status(404).json({ message: 'error when creating answer', isCreated: false });
     }
+    next(error);
+  }
+}
+
+async function handleCreateAnswerByEstimate(req, res, next) {
+  try {
+    const { estimateId, answerIdList } = req.body;
+    const estimateIsCreated = await prisma.estimate_has_Answer.createMany({
+      data: answerIdList.map((answerId) => ({
+        answer_id: parseInt(answerId),
+        estimate_id: parseInt(estimateId),
+      })),
+    });
+    if (estimateIsCreated) {
+      res.status(201).json(estimateIsCreated);
+    } else {
+      res.status(404).json({ message: 'error when creating answer by estimate', isCreated: false });
+    }
+  } catch (error) {
+    console.error(error);
     next(error);
   }
 }
@@ -53,6 +81,27 @@ async function handleGetAllAnswers(req, res, next) {
         modified_by: true,
         User: { ...userInfo },
       },
+    });
+    res.status(200).json(listOfAnswers);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+async function handleGetAllAnswersOrderedByDate(req, res, next) {
+  try {
+    const { number } = req.params;
+    const listOfAnswers = await prisma.answer.findMany({
+      select: {
+        ...defaultSelectOption,
+        updated_at: true,
+        modified_by: true,
+        User: { ...userInfo },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      take: parseInt(number),
     });
     res.status(200).json(listOfAnswers);
   } catch (error) {
@@ -179,4 +228,6 @@ module.exports = {
   handleGetUniqueAnswer,
   handleDeleteAnswer,
   handleUpdateAnswer,
+  handleGetAllAnswersOrderedByDate,
+  handleCreateAnswerByEstimate,
 };
