@@ -10,9 +10,7 @@ async function handleCreateCustomer(req, res, next) {
         created_at: dateCreation,
       },
     });
-    res
-      .status(201)
-      .json({ customerToCreate, message: 'customer created with succes', isCreated: true });
+    res.status(201).json(customerToCreate);
   } catch (error) {
     console.error(error);
     next(error);

@@ -4,6 +4,7 @@ const formatDate = require('../helpers/formatDate');
 async function handleCreateEstimate(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
+    console.log(req.body);
     const estimateToCreate = await prisma.estimate.create({
       data: {
         ...req.body,

@@ -11,7 +11,7 @@ const setupRoutes = (app) => {
   app.use('/api/questions', questionRouter);
   app.use('/api/answers', answerRouter);
   app.use('/api/customer', customerRouter);
-  app.use('/api/estimate', estimateRouter);
+  app.use('/api/estimates', estimateRouter);
 };
 
 module.exports = setupRoutes;

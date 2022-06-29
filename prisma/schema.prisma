@@ -74,8 +74,9 @@ model Estimate {
   user_id             Int                   @db.UnsignedInt
   category_id         Int                   @db.UnsignedInt
   created_at          DateTime              @db.DateTime(0)
-  price               DateTime              @db.DateTime(0)
+  price               Int                   @db.UnsignedInt
   customer_id         Int                   @db.UnsignedInt
+  created_by          String?               @db.VarChar(255)
   type                String                @db.VarChar(255)
   Category            Category              @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_Category")
   User                User                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User")
