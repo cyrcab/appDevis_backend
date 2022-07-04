@@ -5,6 +5,7 @@ const defaultSelectOption = {
   id: true,
   created_at: true,
   price: true,
+  category_id: true,
   Category: {
     select: {
       name: true,
@@ -114,9 +115,9 @@ async function handleUpdateEstimate(req, res, next) {
         },
       });
       if (estimateToUpdate) {
-        res.status(200).json({ message: 'estimate deleted' });
+        res.status(200).json({ message: 'estimate updated', estimateToUpdate });
       } else {
-        res.status(400).json({ message: 'error when deleting estimate' });
+        res.status(400).json({ message: 'error when updating estimate' });
       }
     } else {
       res.status(404).json({ message: 'estimate not found' });

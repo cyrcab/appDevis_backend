@@ -23,25 +23,25 @@ const userInfo = {
 async function handleCreateAnswer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const answerList = [...req.body];
-    const answerToCreate =
-      req.body.constructor === Object
-        ? await prisma.answer.create({
-            data: {
-              ...req.body,
-              created_at: dateCreation,
-            },
-            select: {
-              ...defaultSelectOption,
-            },
-          })
-        : await prisma.answer.createMany({
-            data: answerList.map((answer) => ({
-              ...answer,
-              created_at: dateCreation,
-            })),
-          });
-
+    const { answerToCreate } = req.body;
+    const { newEstimateId } = req.body;
+    const answerCreated = await prisma.answer.create({
+      data: {
+        ...answerToCreate,
+        created_at: dateCreation,
+      },
+      select: {
+        ...defaultSelectOption,
+      },
+    });
+    if (newEstimateId) {
+      link = await prisma.estimate_has_Answer.create({
+        data: {
+          answer_id: answerCreated.id,
+          estimate_id: parseInt(newEstimateId),
+        },
+      });
+    }
     res.status(201).json(answerToCreate);
   } catch (error) {
     console.error(error);
