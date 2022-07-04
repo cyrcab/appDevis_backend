@@ -96,4 +96,40 @@ async function handleDeleteEstimate(req, res, next) {
   }
 }
 
-module.exports = { handleCreateEstimate, handleGetAllEstimate, handleDeleteEstimate };
+async function handleUpdateEstimate(req, res, next) {
+  try {
+    const { id } = req.params;
+    const estimate = await prisma.estimate.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    if (estimate) {
+      const estimateToUpdate = await prisma.estimate.update({
+        where: {
+          id: parseInt(id),
+        },
+        data: {
+          ...req.body,
+        },
+      });
+      if (estimateToUpdate) {
+        res.status(200).json({ message: 'estimate deleted' });
+      } else {
+        res.status(400).json({ message: 'error when deleting estimate' });
+      }
+    } else {
+      res.status(404).json({ message: 'estimate not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+module.exports = {
+  handleCreateEstimate,
+  handleGetAllEstimate,
+  handleDeleteEstimate,
+  handleUpdateEstimate,
+};
