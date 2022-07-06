@@ -6,6 +6,11 @@ const defaultSelectOption = {
   created_at: true,
   content: true,
   price: true,
+  Estimate_has_Answer: {
+    select: {
+      estimate_id: true,
+    },
+  },
 };
 const userInfo = {
   select: {
@@ -42,7 +47,7 @@ async function handleCreateAnswer(req, res, next) {
         },
       });
     }
-    res.status(201).json(answerToCreate);
+    res.status(201).json(answerCreated);
   } catch (error) {
     console.error(error);
     if (error) {
@@ -154,9 +159,8 @@ async function handleDeleteAnswer(req, res, next) {
         where: { id: answer.id },
       });
       res.status(200).json({
-        message: `answer with id : ${id} correctly deleted`,
-        answer: { ...answer },
-        isDeleted: true,
+        message: 'answer correctly deleted',
+        answer: answer,
       });
     } else {
       res.status(404).json({
@@ -201,15 +205,7 @@ async function handleUpdateAnswer(req, res, next) {
           User: { ...userInfo },
         },
       });
-      res.status(200).json({
-        message: `answer with id : ${id} correctly updated`,
-        isUpdated: true,
-        answerBeforeUpdate: { ...answer },
-        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
-        answerAfterUpdate: {
-          ...updatedAnswer,
-        },
-      });
+      res.status(200).json({ message: 'answer updated', answer: updatedAnswer });
     } else {
       res.status(404).json({
         message: `answer with id : ${id} does not exist`,

@@ -113,6 +113,10 @@ async function handleUpdateEstimate(req, res, next) {
         data: {
           ...req.body,
         },
+        select: {
+          ...defaultSelectOption,
+          User: { ...userInfo },
+        },
       });
       if (estimateToUpdate) {
         res.status(200).json({ message: 'estimate updated', estimateToUpdate });
