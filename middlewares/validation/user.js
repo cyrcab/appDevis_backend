@@ -22,6 +22,11 @@ const userUpdateSchema = Joi.object({
   modified_by: Joi.string(),
 });
 
+const userLoginSchema = Joi.object({
+  mail: Joi.string().max(255).email().required(),
+  password: Joi.string().required(),
+});
+
 const userCreationValidation = (req, res, next) => {
   const payload = req.body;
   const { error } = userCreateSchema.validate(payload, {
@@ -48,4 +53,17 @@ const userUpdateValidation = (req, res, next) => {
   }
 };
 
-export { userCreationValidation, userUpdateValidation };
+const userLoginValidation = (req, res, next) => {
+  const payload = req.body;
+  const { error } = userLoginSchema.validate(payload, {
+    abortEarly: false,
+  });
+  if (error) {
+    next(error);
+    console.error(error);
+  } else {
+    next();
+  }
+}
+
+export { userCreationValidation, userUpdateValidation, userLoginValidation };

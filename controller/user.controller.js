@@ -22,8 +22,8 @@ async function getUniqueUser(req, res, next) {
         id: parseInt(id),
       },
     });
-    delete user.password;
     if (user) {
+      delete user.password;
       res.status(200).json(user);
     } else {
       res.status(404).json({ message: `no user found with id : ${id}`, isFound: false });
@@ -36,29 +36,33 @@ async function getUniqueUser(req, res, next) {
 
 async function loginUser(req, res, next) {
   try {
+    const lastLogin = formatDate(new Date());
     const { mail } = req.body;
     const userExist = await prisma.user.findUnique({
       where: {
         mail: mail,
-      },
-      select: {
-        ...defaultSelectOption,
-        password: true,
       },
     });
     if (userExist) {
       const isVerifiedPass = await verifyPassword(req.body.password, userExist.password);
       if (isVerifiedPass) {
         const token = generateToken(userExist);
+        await prisma.user.update({
+          where: {
+            id: userExist.id,
+          },
+          data: {
+            last_login: lastLogin,
+          },
+        });
         delete userExist.password;
         res.status(201).json({
           message: 'User connected',
-          isConnected: true,
           ...userExist,
           userToken: token,
         });
       } else {
-        res.status(401).json({ message: 'Incorrect password', isConnected: false });
+        res.status(401).json({ message: 'Incorrect password' });
       }
     } else {
       res.status(404).json({ message: 'User not found' });
@@ -106,9 +110,6 @@ async function deleteUser(req, res, next) {
       where: {
         id: parseInt(id),
       },
-      select: {
-        ...defaultSelectOption,
-      },
     });
 
     if (user) {
@@ -119,13 +120,10 @@ async function deleteUser(req, res, next) {
       });
       res.status(200).json({
         message: `user with id ${id} correctly deleted`,
-        user: { ...user },
-        isDeleted: true,
       });
     } else {
       res.status(404).json({
         message: `user with id : ${id} does not exist`,
-        isDeleted: false,
       });
     }
   } catch (error) {
