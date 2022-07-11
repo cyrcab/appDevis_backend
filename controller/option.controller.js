@@ -4,22 +4,40 @@ import formatDate from '../helpers/formatDate';
 async function handleCreateOption(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const { price_ht } = req.body;
+    const { price_ht, pack_id } = req.body;
     const user = await prisma.user.findUnique({
       where: {
         id: req.body.user_id,
       },
     });
     const userName = user.firstName + ' ' + user.lastName;
-    const optionCreated = await prisma.option.create({
-      data: {
-        ...req.body,
-        created_by: userName,
-        created_at: dateCreation,
-        price_ttc: price_ht + price_ht * 0.2,
+    const pack = await prisma.pack.findUnique({
+      where: {
+        id: pack_id,
       },
     });
-    res.status(201).json(optionCreated);
+    if (pack) {
+      const optionCreated = await prisma.option.create({
+        data: {
+          ...req.body,
+          created_by: userName,
+          created_at: dateCreation,
+          price_ttc: price_ht + price_ht * 0.2,
+        },
+      });
+      await prisma.pack.update({
+        where: {
+          id: pack.id,
+        },
+        data: {
+          price_ht: pack.price_ht + optionCreated.price_ht,
+          price_ttc: pack.price_ttc + (price_ht + price_ht * 0.2),
+        },
+      });
+      res.status(201).json(optionCreated);
+    } else {
+      res.status(404).json({ message: "Il n'y a pas de pack avec cet id" });
+    }
   } catch (error) {
     console.error(error);
     next(error);

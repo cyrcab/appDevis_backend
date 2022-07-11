@@ -4,20 +4,28 @@ import formatDate from '../helpers/formatDate';
 async function handleCreateCategory(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.body.user_id,
+      },
+    });
+    const userName = user.firstName + ' ' + user.lastName;
     const categoryToCreate = await prisma.category.create({
       data: {
         ...req.body,
         created_at: dateCreation,
+        created_by: userName,
       },
     });
-    res
-      .status(201)
-      .json({ ...categoryToCreate, message: 'category created with succes', isCreated: true });
+
+    if (categoryToCreate) {
+      res.status(201).json(categoryToCreate);
+    } else {
+      res.status(404).json({ message: 'error when creating category' });
+    }
   } catch (error) {
     console.error(error);
-    if (error) {
-      res.status(404).json({ message: 'error when creating category', isCreated: false });
-    }
+    res.status(500).json({ error: error });
     next(error);
   }
 }
