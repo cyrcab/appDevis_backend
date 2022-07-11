@@ -19,27 +19,26 @@ model User {
   mail        String    @unique(map: "mail_UNIQUE") @db.VarChar(255)
   modified_by String?   @db.VarChar(255)
   role        Role      @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_User_Role")
-  options     Options[]
+  option      Option[]
   pack        Pack[]
   file        File[]
 
   @@index([role_id], map: "fk_User_Role_idx")
 }
 
-model Options {
-  id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  user_id     Int       @db.UnsignedInt
-  pack_id     Int       @db.UnsignedInt
-  created_at  DateTime  @db.DateTime(0)
-  created_by  String    @db.VarChar(255)
-  updated_at  DateTime? @db.DateTime(0)
-  updated_by  String?   @db.VarChar(255)
-  content     String    @db.VarChar(255)
-  price_ht    Float?
-  price_ttc   Float?
-  modified_by String?   @db.VarChar(255)
-  user        User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User")
-  pack        Pack      @relation(fields: [pack_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_Pack")
+model Option {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  user_id    Int       @db.UnsignedInt
+  pack_id    Int       @db.UnsignedInt
+  created_at DateTime  @db.DateTime(0)
+  created_by String?   @db.VarChar(255)
+  updated_at DateTime? @db.DateTime(0)
+  updated_by String?   @db.VarChar(255)
+  content    String    @db.VarChar(255)
+  price_ht   Float?
+  price_ttc  Float?
+  creator    User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User")
+  pack       Pack      @relation(fields: [pack_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_Pack")
 
   @@index([user_id], map: "fk_Response_User_idx")
 }
@@ -56,7 +55,7 @@ model Pack {
   price_ttc  Float?
   user       User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Category_User1")
   file       File[]
-  Options    Options[]
+  Option     Option[]
 
   @@index([user_id], map: "fk_Category_User_idx")
 }

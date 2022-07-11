@@ -1,17 +1,17 @@
-const userRouter = require('./user');
-const categoryRouter = require('./category');
-const questionRouter = require('./question.js');
-const answerRouter = require('./answer');
-const customerRouter = require('./customer');
-const estimateRouter = require('./estimate');
+// import userRouter from './user';
+// import categoryRouter from './category';
+// import questionRouter from './question.js';
+import answerRouter from './option.router';
+// import customerRouter from './customer';
+// import estimateRouter from './estimate';
 
 const setupRoutes = (app) => {
-  app.use('/api/users', userRouter);
-  app.use('/api/categories', categoryRouter);
-  app.use('/api/questions', questionRouter);
-  app.use('/api/answers', answerRouter);
-  app.use('/api/customer', customerRouter);
-  app.use('/api/estimates', estimateRouter);
+  // app.use('/api/users', userRouter);
+  // app.use('/api/categories', categoryRouter);
+  // app.use('/api/questions', questionRouter);
+  app.use('/api/options', answerRouter);
+  // app.use('/api/customer', customerRouter);
+  // app.use('/api/estimates', estimateRouter);
 };
 
-module.exports = setupRoutes;
+export default setupRoutes;
