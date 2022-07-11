@@ -8,7 +8,6 @@ const optionCreateSchema = Joi.object({
   created_by: Joi.string().required(),
   content: Joi.string().max(400).required(),
   price_ht: Joi.number(),
-  price_ttc: Joi.number(),
 });
 
 const optionUpdateSchema = Joi.object({

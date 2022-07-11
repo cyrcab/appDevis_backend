@@ -4,10 +4,13 @@ import formatDate from '../helpers/formatDate';
 async function handleCreateOption(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
+    const { price_ht } = req.body;
+    console.log(price_ht);
     const answerCreated = await prisma.options.create({
       data: {
         ...req.body,
         created_at: dateCreation,
+        price_ttc: (price_ht + price_ht*0.2)
       },
     });
     res.status(201).json(answerCreated);
