@@ -21,7 +21,7 @@ async function handleCreatePack(req, res, next) {
     if (packToCreate) {
       res.status(201).json(packToCreate);
     } else {
-      res.status(404).json({ message: 'error when creating category' });
+      res.status(404).json({ message: 'error when creating pack' });
     }
   } catch (error) {
     console.error(error);
@@ -32,8 +32,8 @@ async function handleCreatePack(req, res, next) {
 
 async function handleGetAllPacks(req, res, next) {
   try {
-    const listOfCategories = await prisma.pack.findMany();
-    res.status(200).json(listOfCategories);
+    const listOfPack = await prisma.pack.findMany();
+    res.status(200).json(listOfPack);
   } catch (error) {
     res.status(500).json({ error: error });
     console.error(error);
@@ -89,56 +89,48 @@ async function handleDeletePack(req, res, next) {
   }
 }
 
-async function handleUpdateCategory(req, res, next) {
+async function handleUpdatePack(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
     const { id } = req.params;
     const dataToUpdate = req.body;
-    const category = await prisma.category.findUnique({
+    const pack = await prisma.pack.findUnique({
       where: {
         id: parseInt(id),
       },
-      select: {
-        ...defaultSelectOption,
-        User: {
-          ...userInfo,
-        },
+    });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.body.user_id,
       },
     });
-
-    if (category) {
-      const updatedCategory = await prisma.category.update({
-        where: { id: category.id },
+    const userName = user.firstName + ' ' + user.lastName;
+    if (pack) {
+      const updatedPack = await prisma.pack.update({
+        where: { id: pack.id },
         data: {
           ...dataToUpdate,
           updated_at: updateDate,
-        },
-        select: {
-          ...defaultSelectOption,
-          User: {
-            ...userInfo,
-          },
+          updated_by: userName,
         },
       });
-      res.status(200).json({
-        message: `category with id : ${id} correctly updated`,
-        isUpdated: true,
-        categoryBeforeUpdate: { ...category },
-        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
-        categoryAfterUpdate: {
-          ...updatedCategory,
-        },
-      });
+      res.status(200).json({ message: 'pack updated', pack: { ...pack, ...updatedPack } });
     } else {
       res.status(404).json({
-        message: `category with id : ${id} does not exist`,
-        isUpdated: false,
+        message: `pack with id : ${id} does not exist`,
       });
     }
   } catch (error) {
+    res.status(500).json({ error: error });
     console.error(error);
     next(error);
   }
 }
 
-export { handleGetAllPacks, handleCreatePack, handleGetUniquePack, handleDeletePack };
+export {
+  handleGetAllPacks,
+  handleCreatePack,
+  handleGetUniquePack,
+  handleDeletePack,
+  handleUpdatePack,
+};

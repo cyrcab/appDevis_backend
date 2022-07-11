@@ -4,6 +4,7 @@ import {
   handleCreatePack,
   handleGetUniquePack,
   handleDeletePack,
+  handleUpdatePack,
 } from '../controller/pack.controller';
 import {
   packCreationValidation,
@@ -14,7 +15,10 @@ const packRouter = Router();
 
 packRouter.route('/').get(handleGetAllPacks).post([packCreationValidation, handleCreatePack]);
 
-packRouter.route('/:id').get(handleGetUniquePack).delete(handleDeletePack);
-// categoryRouter.put('/:id', [categoryUpdateValidation, handleUpdateCategory]);
+packRouter
+  .route('/:id')
+  .get(handleGetUniquePack)
+  .delete(handleDeletePack)
+  .put([packUpdateValidation, handleUpdatePack]);
 
 export default packRouter;
