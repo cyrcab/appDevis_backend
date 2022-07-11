@@ -4,7 +4,6 @@ const optionCreateSchema = Joi.object({
   user_id: Joi.number().required(),
   pack_id: Joi.number().required(),
   created_at: Joi.date(),
-  updated_at: Joi.date(),
   created_by: Joi.string(),
   content: Joi.string().max(400).required(),
   price_ht: Joi.number(),
@@ -12,7 +11,6 @@ const optionCreateSchema = Joi.object({
 
 const optionUpdateSchema = Joi.object({
   user_id: Joi.number().required(),
-  pack_id: Joi.number().required(),
   updated_at: Joi.date(),
   content: Joi.string().max(400),
   price_ht: Joi.number(),

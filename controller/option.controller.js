@@ -11,7 +11,7 @@ async function handleCreateOption(req, res, next) {
       },
     });
     const userName = user.firstName + ' ' + user.lastName;
-    const answerCreated = await prisma.option.create({
+    const optionCreated = await prisma.option.create({
       data: {
         ...req.body,
         created_by: userName,
@@ -19,7 +19,7 @@ async function handleCreateOption(req, res, next) {
         price_ttc: price_ht + price_ht * 0.2,
       },
     });
-    res.status(201).json(answerCreated);
+    res.status(201).json(optionCreated);
   } catch (error) {
     console.error(error);
     next(error);
@@ -28,8 +28,8 @@ async function handleCreateOption(req, res, next) {
 
 async function handleGetAllOptions(req, res, next) {
   try {
-    const listOfAnswers = await prisma.option.findMany();
-    res.status(200).json(listOfAnswers);
+    const listOfOptions = await prisma.option.findMany();
+    res.status(200).json(listOfOptions);
   } catch (error) {
     console.error(error);
     next(error);
@@ -96,19 +96,32 @@ async function handleUpdateOption(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
     const { id } = req.params;
-    const dataToUpdate = req.body;
-    const answer = await prisma.answer.findUnique({
+    // search if option exist
+    const option = await prisma.option.findUnique({
       where: {
         id: parseInt(id),
       },
     });
 
-    if (answer) {
-      const updatedAnswer = await prisma.answer.update({
-        where: { id: answer.id },
+    const { user_id } = req.body;
+    // search the user who is updating this option
+    const user = await prisma.user.findUnique({
+      where: {
+        id: user_id,
+      },
+    });
+    const userName = user.firstName + ' ' + user.lastName;
+
+    const { price_ht } = req.body;
+    if (option) {
+      // update option with differents datas
+      const updatedOption = await prisma.option.update({
+        where: { id: option.id },
         data: {
-          ...dataToUpdate,
+          ...req.body,
+          updated_by: userName,
           updated_at: updateDate,
+          price_ttc: price_ht + price_ht * 0.2,
         },
         include: {
           creator: {
@@ -123,10 +136,10 @@ async function handleUpdateOption(req, res, next) {
           },
         },
       });
-      res.status(200).json({ message: 'answer updated', answer: updatedAnswer });
+      res.status(200).json({ message: 'option updated', option: updatedOption });
     } else {
       res.status(404).json({
-        message: `answer with id : ${id} does not exist`,
+        message: `option with id : ${id} does not exist`,
         isUpdated: false,
       });
     }
