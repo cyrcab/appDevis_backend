@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import { handleCreateOption, handleGetAllOptions } from '../controller/option.controller';
-// const {
-//   answerCreationValidation,
-//   answerUpdateValidation,
-// } = require('../middlewares/validation/answer');
+import { optionCreationValidation } from '../middlewares/validation/option.validation';
 
 const answerRouter = Router();
 
-answerRouter.post('/', handleCreateOption).get('/', handleGetAllOptions);
+answerRouter
+  .post('/', [optionCreationValidation, handleCreateOption])
+  .get('/', handleGetAllOptions);
 
 // answerRouter
 //   .get('/:id', handleGetUniqueAnswer)

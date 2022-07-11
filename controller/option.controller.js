@@ -4,7 +4,6 @@ import formatDate from '../helpers/formatDate';
 async function handleCreateOption(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const { user_id, pack_id } = req.body;
     const answerCreated = await prisma.options.create({
       data: {
         ...req.body,
