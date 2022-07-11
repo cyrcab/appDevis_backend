@@ -14,14 +14,12 @@ import {
 const answerRouter = Router();
 
 answerRouter
-  .route('/')
-  .post([optionCreationValidation, handleCreateOption])
-  .get(handleGetAllOptions);
+  .post('/', [optionCreationValidation, handleCreateOption])
+  .get('/', handleGetAllOptions);
 
 answerRouter
-  .route('/:id')
-  .get(handleGetUniqueOption)
-  .delete(handleDeleteOption)
-  .put([optionUpdateValidation, handleUpdateOption]);
+  .get('/:id', handleGetUniqueOption)
+  .delete('/:id', handleDeleteOption)
+  .put('/:id', [optionUpdateValidation, handleUpdateOption]);
 
 export default answerRouter;

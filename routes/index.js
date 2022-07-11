@@ -1,5 +1,5 @@
 import userRouter from './user.router';
-// import categoryRouter from './category';
+import packRouter from './pack.router';
 // import questionRouter from './question.js';
 import answerRouter from './option.router';
 // import customerRouter from './customer';
@@ -7,7 +7,7 @@ import answerRouter from './option.router';
 
 const setupRoutes = (app) => {
   app.use('/api/users', userRouter);
-  // app.use('/api/categories', categoryRouter);
+  app.use('/api/packs', packRouter);
   // app.use('/api/questions', questionRouter);
   app.use('/api/options', answerRouter);
   // app.use('/api/customer', customerRouter);

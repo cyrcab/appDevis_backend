@@ -11,18 +11,18 @@ import {
   userCreationValidation,
   userUpdateValidation,
   userLoginValidation,
-} from '../middlewares/validation/user.validation';
+} from '../middlewares/validation/user';
 
 const userRouter = Router();
 
-userRouter.route('/').post([userCreationValidation, createUser]).get(getAllUsers);
-
-userRouter.route('/login').post([userLoginValidation, loginUser]);
+userRouter
+  .post('/', [userCreationValidation, createUser])
+  .get('/', getAllUsers)
+  .post('/login', [userLoginValidation, loginUser]);
 
 userRouter
-  .route('/:id')
-  .get(getUniqueUser)
-  .delete(deleteUser)
-  .put([userUpdateValidation, updateUser]);
+  .get('/:id', getUniqueUser)
+  .delete('/:id', deleteUser)
+  .put('/:id', [userUpdateValidation, updateUser]);
 
 export default userRouter;
