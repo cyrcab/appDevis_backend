@@ -15,6 +15,7 @@ model User {
   role_id     Int
   created_at  DateTime? @db.DateTime(0)
   updated_at  DateTime? @db.DateTime(0)
+  last_login  DateTime? @db.DateTime(0)
   password    String    @db.VarChar(255)
   mail        String    @unique(map: "mail_UNIQUE") @db.VarChar(255)
   modified_by String?   @db.VarChar(255)

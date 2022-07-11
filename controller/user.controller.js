@@ -1,39 +1,15 @@
-const prisma = require('../helpers/prismaClient.js').default;
-const formatDate = require('../helpers/formatDate');
-const { generateToken } = require('../services/auth');
-const { hashPassword, verifyPassword } = require('../services/hashPassword');
-
-const defaultSelectOption = {
-  password: false,
-  id: true,
-  firstName: true,
-  lastName: true,
-  role_id: true,
-  created_at: true,
-  updated_at: true,
-  mail: true,
-  Role: {
-    select: {
-      Name: true,
-    },
-  },
-  modified_by: true,
-};
+import prisma from '../helpers/prismaClient.js';
+import formatDate from '../helpers/formatDate';
+import { generateToken } from '../services/auth';
+import { hashPassword, verifyPassword } from '../services/hashPassword';
 
 async function getAllUsers(req, res, next) {
   try {
-    const listOfUsers = await prisma.user.findMany({
-      select: {
-        ...defaultSelectOption,
-        _count: {
-          select: {
-            Estimate: true,
-          },
-        },
-      },
-    });
-    res.json(listOfUsers).status(200);
+    const listOfUsers = await prisma.user.findMany();
+    listOfUsers.map((user) => delete user.password);
+    res.status(200).json(listOfUsers);
   } catch (error) {
+    res.status(500).json({ error: error });
     console.log(error);
     next(error);
   }
@@ -46,17 +22,15 @@ async function getUniqueUser(req, res, next) {
       where: {
         id: parseInt(id),
       },
-      select: {
-        ...defaultSelectOption,
-      },
     });
-    delete user.password;
     if (user) {
-      res.status(200).json({ user, message: 'user found', isFound: true });
+      delete user.password;
+      res.status(200).json(user);
     } else {
-      res.status(404).json({ message: `no user found with id : ${id}`, isFound: false });
+      res.status(404).json({ message: `no user found with id : ${id}` });
     }
   } catch (error) {
+    res.status(500).json({ error: error });
     console.log(error);
     next(error);
   }
@@ -64,34 +38,39 @@ async function getUniqueUser(req, res, next) {
 
 async function loginUser(req, res, next) {
   try {
+    const lastLogin = formatDate(new Date());
     const { mail } = req.body;
     const userExist = await prisma.user.findUnique({
       where: {
         mail: mail,
-      },
-      select: {
-        ...defaultSelectOption,
-        password: true,
       },
     });
     if (userExist) {
       const isVerifiedPass = await verifyPassword(req.body.password, userExist.password);
       if (isVerifiedPass) {
         const token = generateToken(userExist);
+        await prisma.user.update({
+          where: {
+            id: userExist.id,
+          },
+          data: {
+            last_login: lastLogin,
+          },
+        });
         delete userExist.password;
         res.status(201).json({
           message: 'User connected',
-          isConnected: true,
           ...userExist,
           userToken: token,
         });
       } else {
-        res.status(401).json({ message: 'Incorrect password', isConnected: false });
+        res.status(401).json({ message: 'Incorrect password' });
       }
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
+    res.status(500).json({ error: error });
     console.error(error);
     next(error);
   }
@@ -117,19 +96,14 @@ async function createUser(req, res, next) {
           created_at: dateCreation,
           password: hashedPassword,
         },
-        select: {
-          ...defaultSelectOption,
-        },
       });
-      console.log(hashedPassword);
-      res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
+      delete userToCreate.password;
+      res.status(201).json({ userToCreate, message: 'user created with succes' });
     }
   } catch (error) {
     console.log(error);
-    if (error) {
-      res.status(400).json({ message: 'error when creating user', isCreated: false });
-    }
-    next(err);
+    res.status(500).json({ message: 'error when creating user' });
+    next(error);
   }
 }
 async function deleteUser(req, res, next) {
@@ -138,9 +112,6 @@ async function deleteUser(req, res, next) {
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
-      },
-      select: {
-        ...defaultSelectOption,
       },
     });
 
@@ -152,20 +123,19 @@ async function deleteUser(req, res, next) {
       });
       res.status(200).json({
         message: `user with id ${id} correctly deleted`,
-        user: { ...user },
-        isDeleted: true,
       });
     } else {
       res.status(404).json({
         message: `user with id : ${id} does not exist`,
-        isDeleted: false,
       });
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: error });
     next(error);
   }
 }
+
 async function updateUser(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
@@ -174,9 +144,6 @@ async function updateUser(req, res, next) {
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
-      },
-      select: {
-        ...defaultSelectOption,
       },
     });
 
@@ -189,33 +156,19 @@ async function updateUser(req, res, next) {
           ...dataToUpdate,
           updated_at: updateDate,
         },
-        select: {
-          ...defaultSelectOption,
-        },
       });
-      res.status(200).json({
-        message: `user with id : ${id} correctly updated`,
-        isUpdated: true,
-        userBeforeUpdate: { ...user },
-        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
-        userAfterUpdate: { ...updatedUser },
-      });
+      delete updatedUser.password;
+      res.status(200).json(updatedUser);
     } else {
       res.status(404).json({
         message: `user with id : ${id} does not exist`,
-        isModified: false,
       });
     }
   } catch (error) {
+    next(error);
+    res.status(500).json({ error: error });
     console.error(error);
   }
 }
 
-module.exports = {
-  createUser,
-  getAllUsers,
-  getUniqueUser,
-  deleteUser,
-  updateUser,
-  loginUser,
-};
+export { createUser, getAllUsers, getUniqueUser, deleteUser, updateUser, loginUser };

@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-var { expressjwt } = require('express-jwt');
+import jwt from 'jsonwebtoken';
+import { expressjwt } from 'express-jwt';
 
 const secret = process.env.JWT_SECRET;
 
@@ -11,4 +11,4 @@ const generateToken = (user) => {
   return token;
 };
 
-module.exports = { generateToken, auth };
+export { generateToken, auth };
