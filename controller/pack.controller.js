@@ -61,38 +61,30 @@ async function handleGetUniquePack(req, res, next) {
   }
 }
 
-async function handleDeleteCategory(req, res, next) {
+async function handleDeletePack(req, res, next) {
   try {
     const { id } = req.params;
-    const category = await prisma.category.findUnique({
+    const pack = await prisma.pack.findUnique({
       where: {
         id: parseInt(id),
       },
-      select: {
-        ...defaultSelectOption,
-        User: {
-          ...userInfo,
-        },
-      },
     });
 
-    if (category) {
-      await prisma.category.delete({
-        where: { id: category.id },
+    if (pack) {
+      await prisma.pack.delete({
+        where: { id: pack.id },
       });
       res.status(200).json({
-        message: `category with id : ${id} correctly deleted`,
-        category: { ...category },
-        isDeleted: true,
+        message: `pack with id : ${id} correctly deleted`,
       });
     } else {
       res.status(404).json({
-        message: `category with id : ${id} does not exist`,
-        isDeleted: false,
+        message: `pack with id : ${id} does not exist`,
       });
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: error });
     next(error);
   }
 }
@@ -149,4 +141,4 @@ async function handleUpdateCategory(req, res, next) {
   }
 }
 
-export { handleGetAllPacks, handleCreatePack, handleGetUniquePack };
+export { handleGetAllPacks, handleCreatePack, handleGetUniquePack, handleDeletePack };

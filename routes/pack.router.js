@@ -3,6 +3,7 @@ import {
   handleGetAllPacks,
   handleCreatePack,
   handleGetUniquePack,
+  handleDeletePack,
 } from '../controller/pack.controller';
 import {
   packCreationValidation,
@@ -11,10 +12,9 @@ import {
 
 const packRouter = Router();
 
-packRouter.get('/', handleGetAllPacks).post('/', [packCreationValidation, handleCreatePack]);
+packRouter.route('/').get(handleGetAllPacks).post([packCreationValidation, handleCreatePack]);
 
-packRouter.get('/:id', handleGetUniquePack);
-// categoryRouter.delete('/:id', handleDeleteCategory);
+packRouter.route('/:id').get(handleGetUniquePack).delete(handleDeletePack);
 // categoryRouter.put('/:id', [categoryUpdateValidation, handleUpdateCategory]);
 
 export default packRouter;

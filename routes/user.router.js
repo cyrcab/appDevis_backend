@@ -15,14 +15,14 @@ import {
 
 const userRouter = Router();
 
-userRouter
-  .post('/', [userCreationValidation, createUser])
-  .get('/', getAllUsers)
-  .post('/login', [userLoginValidation, loginUser]);
+userRouter.route('/').post([userCreationValidation, createUser]).get(getAllUsers);
+
+userRouter.route('/login').post([userLoginValidation, loginUser]);
 
 userRouter
-  .get('/:id', getUniqueUser)
-  .delete('/:id', deleteUser)
-  .put('/:id', [userUpdateValidation, updateUser]);
+  .route('/:id')
+  .get(getUniqueUser)
+  .delete(deleteUser)
+  .put([userUpdateValidation, updateUser]);
 
 export default userRouter;
