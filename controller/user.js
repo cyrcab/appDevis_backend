@@ -50,6 +50,7 @@ async function getUniqueUser(req, res, next) {
         ...defaultSelectOption,
       },
     });
+    delete user.password;
     if (user) {
       res.status(200).json({ user, message: 'user found', isFound: true });
     } else {

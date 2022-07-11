@@ -31,7 +31,7 @@ model Option {
   user_id    Int       @db.UnsignedInt
   pack_id    Int       @db.UnsignedInt
   created_at DateTime  @db.DateTime(0)
-  created_by String    @db.VarChar(255)
+  created_by String?   @db.VarChar(255)
   updated_at DateTime? @db.DateTime(0)
   updated_by String?   @db.VarChar(255)
   content    String    @db.VarChar(255)
