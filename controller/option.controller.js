@@ -61,34 +61,30 @@ async function handleGetUniqueOption(req, res, next) {
   }
 }
 
-// async function handleDeleteOption(req, res, next) {
-//   try {
-//     const { id } = req.params;
-//     const answer = await prisma.answer.findUnique({
-//       where: {
-//         id: parseInt(id),
-//       },
-//       select: {
-//         ...defaultSelectOption,
-//         updated_at: true,
-//         modified_by: true,
-//         User: { ...userInfo },
-//       },
-//     });
-//     if (answer) {
-//       await prisma.answer.delete({
-//         where: { id: answer.id },
-//       });
-//       res.status(200).json({
-//         message: 'answer deleted',
-//         answer: answer,
-//       });
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// }
+async function handleDeleteOption(req, res, next) {
+  try {
+    const { id } = req.params;
+    const answer = await prisma.option.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    if (answer) {
+      await prisma.option.delete({
+        where: { id: answer.id },
+      });
+      res.status(200).json({
+        message: 'answer deleted',
+        answer: answer,
+      });
+    } else {
+      res.status(404).json({ message: 'an error occured whend delting option' });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
 
 // async function handleUpdateOption(req, res, next) {
 //   try {
@@ -134,4 +130,4 @@ async function handleGetUniqueOption(req, res, next) {
 //   }
 // }
 
-export { handleCreateOption, handleGetAllOptions, handleGetUniqueOption };
+export { handleCreateOption, handleGetAllOptions, handleGetUniqueOption, handleDeleteOption };

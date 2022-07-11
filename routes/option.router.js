@@ -3,6 +3,7 @@ import {
   handleCreateOption,
   handleGetAllOptions,
   handleGetUniqueOption,
+  handleDeleteOption,
 } from '../controller/option.controller';
 import { optionCreationValidation } from '../middlewares/validation/option.validation';
 
@@ -12,8 +13,7 @@ answerRouter
   .post('/', [optionCreationValidation, handleCreateOption])
   .get('/', handleGetAllOptions);
 
-answerRouter.get('/:id', handleGetUniqueOption);
-//   .delete('/:id', handleDeleteAnswer)
+answerRouter.get('/:id', handleGetUniqueOption).delete('/:id', handleDeleteOption);
 //   .put('/:id', [answerUpdateValidation, handleUpdateAnswer]);
 
 export default answerRouter;
