@@ -1,6 +1,13 @@
 const estimateRouter = require('express').Router();
-const { handleCreateEstimate } = require('../controller/estimate');
+const {
+  handleCreateEstimate,
+  handleGetAllEstimate,
+  handleDeleteEstimate,
+  handleUpdateEstimate,
+} = require('../controller/estimate');
 
-estimateRouter.post('/', handleCreateEstimate);
+estimateRouter.post('/', handleCreateEstimate).get('/', handleGetAllEstimate);
+
+estimateRouter.delete('/:id', handleDeleteEstimate).put('/:id', handleUpdateEstimate);
 
 module.exports = estimateRouter;

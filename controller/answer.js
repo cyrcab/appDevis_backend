@@ -6,6 +6,11 @@ const defaultSelectOption = {
   created_at: true,
   content: true,
   price: true,
+  Estimate_has_Answer: {
+    select: {
+      estimate_id: true,
+    },
+  },
 };
 const userInfo = {
   select: {
@@ -23,26 +28,26 @@ const userInfo = {
 async function handleCreateAnswer(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const answerList = [...req.body];
-    const answerToCreate =
-      req.body.constructor === Object
-        ? await prisma.answer.create({
-            data: {
-              ...req.body,
-              created_at: dateCreation,
-            },
-            select: {
-              ...defaultSelectOption,
-            },
-          })
-        : await prisma.answer.createMany({
-            data: answerList.map((answer) => ({
-              ...answer,
-              created_at: dateCreation,
-            })),
-          });
-
-    res.status(201).json(answerToCreate);
+    const { answerToCreate } = req.body;
+    const { newEstimateId } = req.body;
+    const answerCreated = await prisma.answer.create({
+      data: {
+        ...answerToCreate,
+        created_at: dateCreation,
+      },
+      select: {
+        ...defaultSelectOption,
+      },
+    });
+    if (newEstimateId) {
+      link = await prisma.estimate_has_Answer.create({
+        data: {
+          answer_id: answerCreated.id,
+          estimate_id: parseInt(newEstimateId),
+        },
+      });
+    }
+    res.status(201).json(answerCreated);
   } catch (error) {
     console.error(error);
     if (error) {
@@ -154,9 +159,8 @@ async function handleDeleteAnswer(req, res, next) {
         where: { id: answer.id },
       });
       res.status(200).json({
-        message: `answer with id : ${id} correctly deleted`,
-        answer: { ...answer },
-        isDeleted: true,
+        message: 'answer correctly deleted',
+        answer: answer,
       });
     } else {
       res.status(404).json({
@@ -201,15 +205,7 @@ async function handleUpdateAnswer(req, res, next) {
           User: { ...userInfo },
         },
       });
-      res.status(200).json({
-        message: `answer with id : ${id} correctly updated`,
-        isUpdated: true,
-        answerBeforeUpdate: { ...answer },
-        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
-        answerAfterUpdate: {
-          ...updatedAnswer,
-        },
-      });
+      res.status(200).json({ message: 'answer updated', answer: updatedAnswer });
     } else {
       res.status(404).json({
         message: `answer with id : ${id} does not exist`,
