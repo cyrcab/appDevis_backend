@@ -1,28 +1,5 @@
-const prisma = require('../helpers/prismaClient').default;
-const formatDate = require('../helpers/formatDate');
-
-const defaultSelectOption = {
-  user_id: false,
-  id: true,
-  created_at: true,
-  updated_at: true,
-  name: true,
-  modified_by: true,
-  Estimate: true,
-  Question: true,
-};
-const userInfo = {
-  select: {
-    lastName: true,
-    firstName: true,
-    mail: true,
-    Role: {
-      select: {
-        Name: true,
-      },
-    },
-  },
-};
+import prisma from '../helpers/prismaClient.js';
+import formatDate from '../helpers/formatDate';
 
 async function handleCreateCategory(req, res, next) {
   try {
@@ -45,18 +22,12 @@ async function handleCreateCategory(req, res, next) {
   }
 }
 
-async function handleGetAllCategories(req, res, next) {
+async function handleGetAllPacks(req, res, next) {
   try {
-    const listOfCategories = await prisma.category.findMany({
-      select: {
-        ...defaultSelectOption,
-        User: {
-          ...userInfo,
-        },
-      },
-    });
+    const listOfCategories = await prisma.pack.findMany();
     res.status(200).json(listOfCategories);
   } catch (error) {
+    res.status(500).json({ error: error });
     console.error(error);
     next(error);
   }
@@ -203,11 +174,4 @@ async function handleUpdateCategory(req, res, next) {
   }
 }
 
-module.exports = {
-  handleCreateCategory,
-  handleGetAllCategories,
-  handleGetUniqueCategory,
-  handleDeleteCategory,
-  handleUpdateCategory,
-  handleGetAllQuestionsByCategory,
-};
+export { handleGetAllPacks };
