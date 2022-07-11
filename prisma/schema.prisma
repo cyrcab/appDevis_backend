@@ -37,7 +37,6 @@ model Options {
   content     String    @db.VarChar(255)
   price_ht    Float?
   price_ttc   Float?
-  modified_by String?   @db.VarChar(255)
   user        User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_User")
   pack        Pack      @relation(fields: [pack_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Response_Pack")
 

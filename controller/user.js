@@ -1,4 +1,4 @@
-const prisma = require('../helpers/prismaClient.js');
+const prisma = require('../helpers/prismaClient.js').default;
 const formatDate = require('../helpers/formatDate');
 const { generateToken } = require('../services/auth');
 const { hashPassword, verifyPassword } = require('../services/hashPassword');

@@ -1,4 +1,4 @@
-const prisma = require('../helpers/prismaClient');
+const prisma = require('../helpers/prismaClient').default;
 const formatDate = require('../helpers/formatDate');
 
 const defaultSelectOption = {

@@ -1,19 +1,12 @@
-const userRouter = require('express').Router();
-const {
-  createUser,
-  getAllUsers,
-  getUniqueUser,
-  deleteUser,
-  updateUser,
-  loginUser,
-} = require('../controller/user');
-const { userCreationValidation, userUpdateValidation } = require('../middlewares/validation/user');
+// const userRouter = require('express').Router();
+// import { createUser, getAllUsers, getUniqueUser, deleteUser, updateUser, loginUser } from '../controller/user';
+// import { userCreationValidation, userUpdateValidation } from '../middlewares/validation/user';
 
-userRouter.post('/', [userCreationValidation, createUser]);
-userRouter.post('/login', loginUser);
-userRouter.get('/', getAllUsers);
-userRouter.get('/:id', getUniqueUser);
-userRouter.delete('/:id', deleteUser);
-userRouter.put('/:id', [userUpdateValidation, updateUser]);
+// userRouter.post('/', [userCreationValidation, createUser]);
+// userRouter.post('/login', loginUser);
+// userRouter.get('/', getAllUsers);
+// userRouter.get('/:id', getUniqueUser);
+// userRouter.delete('/:id', deleteUser);
+// userRouter.put('/:id', [userUpdateValidation, updateUser]);
 
-module.exports = userRouter;
+// export default userRouter;
