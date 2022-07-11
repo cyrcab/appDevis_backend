@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
   createUser,
-  // getAllUsers,
-  // getUniqueUser,
+  getAllUsers,
+  getUniqueUser,
   // deleteUser,
   // updateUser,
   // loginUser,
@@ -13,11 +13,11 @@ const userRouter = Router();
 
 userRouter
   .post('/', [userCreationValidation, createUser])
-  // .get('/', getAllUsers)
+  .get('/', getAllUsers)
   // .post('/login', loginUser);
 
-// userRouter
-  // .get('/:id', getUniqueUser)
+userRouter
+  .get('/:id', getUniqueUser)
   // .delete('/:id', deleteUser)
   // .put('/:id', [userUpdateValidation, updateUser]);
 

@@ -5,17 +5,9 @@ import { hashPassword, verifyPassword } from '../services/hashPassword';
 
 async function getAllUsers(req, res, next) {
   try {
-    const listOfUsers = await prisma.user.findMany({
-      select: {
-        ...defaultSelectOption,
-        _count: {
-          select: {
-            Estimate: true,
-          },
-        },
-      },
-    });
-    res.json(listOfUsers).status(200);
+    const listOfUsers = await prisma.user.findMany();
+    listOfUsers.map((user) => delete user.password);
+    res.status(200).json(listOfUsers);
   } catch (error) {
     console.log(error);
     next(error);
@@ -29,13 +21,10 @@ async function getUniqueUser(req, res, next) {
       where: {
         id: parseInt(id),
       },
-      select: {
-        ...defaultSelectOption,
-      },
     });
     delete user.password;
     if (user) {
-      res.status(200).json({ user, message: 'user found', isFound: true });
+      res.status(200).json(user);
     } else {
       res.status(404).json({ message: `no user found with id : ${id}`, isFound: false });
     }
