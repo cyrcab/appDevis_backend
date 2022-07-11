@@ -1,4 +1,4 @@
-// import userRouter from './user';
+import userRouter from './user.router';
 // import categoryRouter from './category';
 // import questionRouter from './question.js';
 import answerRouter from './option.router';
@@ -6,7 +6,7 @@ import answerRouter from './option.router';
 // import estimateRouter from './estimate';
 
 const setupRoutes = (app) => {
-  // app.use('/api/users', userRouter);
+  app.use('/api/users', userRouter);
   // app.use('/api/categories', categoryRouter);
   // app.use('/api/questions', questionRouter);
   app.use('/api/options', answerRouter);

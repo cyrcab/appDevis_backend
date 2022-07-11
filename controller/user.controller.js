@@ -1,24 +1,7 @@
-const prisma = require('../helpers/prismaClient.js').default;
-const formatDate = require('../helpers/formatDate');
-const { generateToken } = require('../services/auth');
-const { hashPassword, verifyPassword } = require('../services/hashPassword');
-
-const defaultSelectOption = {
-  password: false,
-  id: true,
-  firstName: true,
-  lastName: true,
-  role_id: true,
-  created_at: true,
-  updated_at: true,
-  mail: true,
-  Role: {
-    select: {
-      Name: true,
-    },
-  },
-  modified_by: true,
-};
+import prisma from '../helpers/prismaClient.js';
+import formatDate from '../helpers/formatDate';
+import { generateToken } from '../services/auth';
+import { hashPassword, verifyPassword } from '../services/hashPassword';
 
 async function getAllUsers(req, res, next) {
   try {
@@ -117,19 +100,14 @@ async function createUser(req, res, next) {
           created_at: dateCreation,
           password: hashedPassword,
         },
-        select: {
-          ...defaultSelectOption,
-        },
       });
-      console.log(hashedPassword);
+      delete userToCreate.password;
       res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
     }
   } catch (error) {
     console.log(error);
-    if (error) {
-      res.status(400).json({ message: 'error when creating user', isCreated: false });
-    }
-    next(err);
+    res.status(500).json({ message: 'error when creating user', isCreated: false });
+    next(error);
   }
 }
 async function deleteUser(req, res, next) {
@@ -211,11 +189,4 @@ async function updateUser(req, res, next) {
   }
 }
 
-module.exports = {
-  createUser,
-  getAllUsers,
-  getUniqueUser,
-  deleteUser,
-  updateUser,
-  loginUser,
-};
+export { createUser, getAllUsers, getUniqueUser, deleteUser, updateUser, loginUser };

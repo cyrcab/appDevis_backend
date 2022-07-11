@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const userCreateSchema = Joi.object({
   firstName: Joi.string().max(45).required(),
@@ -48,7 +48,4 @@ const userUpdateValidation = (req, res, next) => {
   }
 };
 
-module.exports = {
-  userCreationValidation,
-  userUpdateValidation,
-};
+export { userCreationValidation, userUpdateValidation };
