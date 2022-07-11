@@ -9,6 +9,7 @@ async function getAllUsers(req, res, next) {
     listOfUsers.map((user) => delete user.password);
     res.status(200).json(listOfUsers);
   } catch (error) {
+    res.status(500).json({ error: error });
     console.log(error);
     next(error);
   }
@@ -26,9 +27,10 @@ async function getUniqueUser(req, res, next) {
       delete user.password;
       res.status(200).json(user);
     } else {
-      res.status(404).json({ message: `no user found with id : ${id}`, isFound: false });
+      res.status(404).json({ message: `no user found with id : ${id}` });
     }
   } catch (error) {
+    res.status(500).json({ error: error });
     console.log(error);
     next(error);
   }
@@ -68,6 +70,7 @@ async function loginUser(req, res, next) {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
+    res.status(500).json({ error: error });
     console.error(error);
     next(error);
   }
@@ -95,11 +98,11 @@ async function createUser(req, res, next) {
         },
       });
       delete userToCreate.password;
-      res.status(201).json({ userToCreate, message: 'user created with succes', isCreated: true });
+      res.status(201).json({ userToCreate, message: 'user created with succes' });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: 'error when creating user', isCreated: false });
+    res.status(500).json({ message: 'error when creating user' });
     next(error);
   }
 }
@@ -128,9 +131,11 @@ async function deleteUser(req, res, next) {
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: error });
     next(error);
   }
 }
+
 async function updateUser(req, res, next) {
   try {
     const updateDate = formatDate(new Date());
@@ -139,9 +144,6 @@ async function updateUser(req, res, next) {
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
-      },
-      select: {
-        ...defaultSelectOption,
       },
     });
 
@@ -154,24 +156,17 @@ async function updateUser(req, res, next) {
           ...dataToUpdate,
           updated_at: updateDate,
         },
-        select: {
-          ...defaultSelectOption,
-        },
       });
-      res.status(200).json({
-        message: `user with id : ${id} correctly updated`,
-        isUpdated: true,
-        userBeforeUpdate: { ...user },
-        datasUpdated: { ...dataToUpdate, updated_at: updateDate },
-        userAfterUpdate: { ...updatedUser },
-      });
+      delete updatedUser.password;
+      res.status(200).json(updatedUser);
     } else {
       res.status(404).json({
         message: `user with id : ${id} does not exist`,
-        isModified: false,
       });
     }
   } catch (error) {
+    next(error);
+    res.status(500).json({ error: error });
     console.error(error);
   }
 }

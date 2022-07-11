@@ -5,21 +5,16 @@ const userCreateSchema = Joi.object({
   lastName: Joi.string().max(45).required(),
   role_id: Joi.number().required(),
   created_at: Joi.date(),
-  updated_at: Joi.date(),
   password: Joi.string().max(255).min(6).required(),
   mail: Joi.string().max(255).email().required(),
-  modified_by: Joi.string(),
 });
 
 const userUpdateSchema = Joi.object({
   firstName: Joi.string().max(45),
   lastName: Joi.string().max(45),
   role_id: Joi.number(),
-  created_at: Joi.date(),
-  updated_at: Joi.date(),
   password: Joi.string().max(255).min(6),
   mail: Joi.string().max(255).email(),
-  modified_by: Joi.string(),
 });
 
 const userLoginSchema = Joi.object({

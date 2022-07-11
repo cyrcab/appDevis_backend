@@ -4,7 +4,7 @@ import {
   getAllUsers,
   getUniqueUser,
   deleteUser,
-  // updateUser,
+  updateUser,
   loginUser,
 } from '../controller/user.controller';
 import {
@@ -20,8 +20,9 @@ userRouter
   .get('/', getAllUsers)
   .post('/login', [userLoginValidation, loginUser]);
 
-userRouter.get('/:id', getUniqueUser)
-.delete('/:id', deleteUser)
-// .put('/:id', [userUpdateValidation, updateUser]);
+userRouter
+  .get('/:id', getUniqueUser)
+  .delete('/:id', deleteUser)
+  .put('/:id', [userUpdateValidation, updateUser]);
 
 export default userRouter;
