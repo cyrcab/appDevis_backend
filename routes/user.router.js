@@ -11,7 +11,7 @@ import {
   userCreationValidation,
   userUpdateValidation,
   userLoginValidation,
-} from '../middlewares/validation/user';
+} from '../middlewares/validation/user.validation';
 
 const userRouter = Router();
 

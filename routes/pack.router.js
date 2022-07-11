@@ -1,13 +1,19 @@
 import { Router } from 'express';
-import { handleGetAllPacks } from '../controller/pack.controller';
+import {
+  handleGetAllPacks,
+  handleCreatePack,
+  handleGetUniquePack,
+} from '../controller/pack.controller';
+import {
+  packCreationValidation,
+  packUpdateValidation,
+} from '../middlewares/validation/pack.validation';
 
 const packRouter = Router();
 
-packRouter.get('/', handleGetAllPacks);
-// categoryRouter.post('/', [categoryCreationValidation, handleCreateCategory]);
-// categoryRouter.get('/', handleGetAllCategories);
-// categoryRouter.get('/:id', handleGetUniqueCategory);
-// categoryRouter.get('/:id/questions', handleGetAllQuestionsByCategory);
+packRouter.get('/', handleGetAllPacks).post('/', [packCreationValidation, handleCreatePack]);
+
+packRouter.get('/:id', handleGetUniquePack);
 // categoryRouter.delete('/:id', handleDeleteCategory);
 // categoryRouter.put('/:id', [categoryUpdateValidation, handleUpdateCategory]);
 

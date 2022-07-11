@@ -1,7 +1,7 @@
 import prisma from '../helpers/prismaClient.js';
 import formatDate from '../helpers/formatDate';
 
-async function handleCreateCategory(req, res, next) {
+async function handleCreatePack(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
     const user = await prisma.user.findUnique({
@@ -10,7 +10,7 @@ async function handleCreateCategory(req, res, next) {
       },
     });
     const userName = user.firstName + ' ' + user.lastName;
-    const categoryToCreate = await prisma.category.create({
+    const packToCreate = await prisma.pack.create({
       data: {
         ...req.body,
         created_at: dateCreation,
@@ -18,8 +18,8 @@ async function handleCreateCategory(req, res, next) {
       },
     });
 
-    if (categoryToCreate) {
-      res.status(201).json(categoryToCreate);
+    if (packToCreate) {
+      res.status(201).json(packToCreate);
     } else {
       res.status(404).json({ message: 'error when creating category' });
     }
@@ -41,55 +41,22 @@ async function handleGetAllPacks(req, res, next) {
   }
 }
 
-async function handleGetUniqueCategory(req, res, next) {
+async function handleGetUniquePack(req, res, next) {
   try {
     const { id } = req.params;
-    const category = await prisma.category.findUnique({
+    const pack = await prisma.pack.findUnique({
       where: {
         id: parseInt(id),
       },
-      select: {
-        ...defaultSelectOption,
-        User: {
-          ...userInfo,
-        },
-      },
     });
-    if (category) {
-      res.status(200).json(category);
+    if (pack) {
+      res.status(200).json(pack);
     } else {
-      res.status(404).json({ message: `no category found with id : ${id}`, isFound: false });
+      res.status(404).json({ message: `no pack found with id : ${id}` });
     }
   } catch (error) {
     console.error(error);
-    next(error);
-  }
-}
-
-async function handleGetAllQuestionsByCategory(req, res, next) {
-  try {
-    const { id } = req.params;
-    const listOfQuestions = await prisma.question.findMany({
-      where: {
-        category_id: parseInt(id),
-      },
-      select: {
-        user_id: false,
-        id: true,
-        created_at: true,
-        updated_at: true,
-        content: true,
-        is_public: true,
-        indication: true,
-        Answer: true,
-        User: {
-          ...userInfo,
-        },
-      },
-    });
-    res.status(200).json(listOfQuestions);
-  } catch (error) {
-    console.error(next);
+    res.status(500).json({ error: error });
     next(error);
   }
 }
@@ -182,4 +149,4 @@ async function handleUpdateCategory(req, res, next) {
   }
 }
 
-export { handleGetAllPacks };
+export { handleGetAllPacks, handleCreatePack, handleGetUniquePack };
