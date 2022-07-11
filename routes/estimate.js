@@ -3,12 +3,11 @@ const {
   handleCreateEstimate,
   handleGetAllEstimate,
   handleDeleteEstimate,
-  handleUpdateEstimate
+  handleUpdateEstimate,
 } = require('../controller/estimate');
 
-estimateRouter.post('/', handleCreateEstimate);
-estimateRouter.get('/', handleGetAllEstimate);
-estimateRouter.delete('/:id', handleDeleteEstimate);
-estimateRouter.put('/:id', handleUpdateEstimate);
+estimateRouter.post('/', handleCreateEstimate).get('/', handleGetAllEstimate);
+
+estimateRouter.delete('/:id', handleDeleteEstimate).put('/:id', handleUpdateEstimate);
 
 module.exports = estimateRouter;
