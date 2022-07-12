@@ -1,6 +1,6 @@
 import prisma from '../helpers/prismaClient.js';
 import formatDate from '../helpers/formatDate';
-import { generateToken } from '../services/auth';
+import { newToken } from '../services/auth';
 import { hashPassword, verifyPassword } from '../services/hashPassword';
 
 async function getAllUsers(req, res, next) {

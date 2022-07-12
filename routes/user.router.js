@@ -17,7 +17,7 @@ const userRouter = Router();
 
 userRouter.route('/').post([userCreationValidation, createUser]).get(getAllUsers);
 
-userRouter.route('/login').post([userLoginValidation, loginUser]);
+// userRouter.route('/signin').post([userLoginValidation, signup]);
 
 userRouter
   .route('/:id')
