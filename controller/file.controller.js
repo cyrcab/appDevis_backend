@@ -1,13 +1,16 @@
 import prisma from '../helpers/prismaClient';
 import formatDate from '../helpers/formatDate';
+import getIdentificationNumber from '../helpers/getIdentificationNumber';
 
 export async function createFile(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
+    const identificationNumber = await getIdentificationNumber(dateCreation);
     const fileToCreate = await prisma.file.create({
       data: {
         ...req.body,
         created_at: dateCreation,
+        identification_number: identificationNumber,
       },
     });
     if (!fileToCreate) {
@@ -45,7 +48,7 @@ export async function deleteFile(req, res, next) {
       },
     });
     if (file) {
-      const file = await prisma.estimate.delete({
+      const file = await prisma.file.delete({
         where: {
           id: parseInt(id),
         },

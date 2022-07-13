@@ -83,7 +83,7 @@ export const signin = async (req, res) => {
     return res.status(201).send({ token });
   } catch (error) {
     console.error(error);
-    res.status(500).end();
+    return res.status(500).end();
   }
 };
 

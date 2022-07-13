@@ -77,7 +77,6 @@ model File {
   id                    Int       @id @default(autoincrement()) @db.UnsignedInt
   user_id               Int       @db.UnsignedInt
   created_at            DateTime  @db.DateTime(0)
-  price                 Int       @db.UnsignedInt
   customer_id           Int       @db.UnsignedInt
   created_by            String?   @db.VarChar(255)
   updated_by            String?   @db.VarChar(255)

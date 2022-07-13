@@ -6,7 +6,8 @@
     "start": "node --experimental-modules --es-module-specifier-resolution=node app.js",
     "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node app.js",
     "db:pull": "npx prisma db pull",
-    "db:push": "npx prisma db push"
+    "db:push": "npx prisma db push",
+    "db:studio": "npx prisma studio"
   },
   "prisma": {
     "seed": "node prisma/seedingDb/seedingDb.js"
