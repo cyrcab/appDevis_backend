@@ -1,16 +1,21 @@
 import prisma from '../helpers/prismaClient';
 import formatDate from '../helpers/formatDate';
-import getIdentificationNumber from '../helpers/getIdentificationNumber';
+import {
+  getBillIdentificationNumber,
+  getEstimateIdentificationNumber,
+} from '../helpers/getIdentificationNumber';
 
 export async function createFile(req, res, next) {
   try {
     const dateCreation = formatDate(new Date());
-    const identificationNumber = await getIdentificationNumber(dateCreation);
+    const billIdentificationNumber = await getBillIdentificationNumber(dateCreation);
+    const estimateIdentificationNumber = await getEstimateIdentificationNumber(dateCreation);
     const fileToCreate = await prisma.file.create({
       data: {
         ...req.body,
         created_at: dateCreation,
-        identification_number: identificationNumber,
+        identification_number:
+          req.body.type === 'bill' ? billIdentificationNumber : estimateIdentificationNumber,
       },
     });
     if (!fileToCreate) {
