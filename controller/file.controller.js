@@ -4,6 +4,7 @@ import {
   getBillIdentificationNumber,
   getEstimateIdentificationNumber,
 } from '../helpers/getIdentificationNumber';
+import calculPriceAndUpdate from '../services/priceCalcul';
 
 export async function createFile(req, res, next) {
   try {
@@ -22,25 +23,13 @@ export async function createFile(req, res, next) {
         pack: true,
       },
     });
+    let priceUpdated = await calculPriceAndUpdate(
+      fileToCreate.id,
+      fileToCreate.pack,
+      fileToCreate.reduction
+    );
 
-    let priceHt = 0;
-    let priceTtc = 0;
-    if (fileToCreate.pack[0]) {
-      priceHt = fileToCreate.pack.reduce((acc, cur) => acc + cur.price_ht, 0);
-      priceTtc = priceHt + priceHt * 0.2 - fileToCreate.reduction;
-    }
-    if (priceHt !== 0 && priceTtc !== 0) {
-      fileToCreate = await prisma.file.update({
-        where: {
-          id: fileToCreate.id,
-        },
-        data: {
-          price_ht: priceHt,
-          price_ttc: priceTtc,
-        },
-      });
-    }
-    if (!fileToCreate) {
+    if (!fileToCreate || !priceUpdated) {
       return res.status(400).end();
     }
     return res.status(201).json({ data: fileToCreate });
@@ -107,14 +96,24 @@ export async function updateFile(req, res, next) {
         where: {
           id: parseInt(id),
         },
+        include: {
+          pack: true,
+        },
         data: {
           ...req.body,
         },
       });
-      if (fileUpdated) {
-        return res.status(200).json({ data: fileUpdated });
-      } else {
+
+      let priceUpdated = await calculPriceAndUpdate(
+        fileUpdated.id,
+        fileUpdated.pack,
+        fileUpdated.reduction
+      );
+
+      if (!fileUpdated || !priceUpdated) {
         return res.status(400).end();
+      } else {
+        return res.status(200).json({ data: fileUpdated });
       }
     } else {
       return res.status(404).end();
