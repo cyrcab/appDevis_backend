@@ -1,5 +1,5 @@
-const prisma = require('../../helpers/prismaClient');
-const { roles, users } = require('./seeds');
+import prisma from '../../helpers/prismaClient.js';
+import { users, roles } from './seeds.js';
 
 async function main() {
   await prisma.role.createMany({

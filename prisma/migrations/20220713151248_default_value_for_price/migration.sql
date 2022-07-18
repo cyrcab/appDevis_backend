@@ -1,0 +1,12 @@
+-- AlterTable
+ALTER TABLE `File` MODIFY `price_ht` DOUBLE NULL DEFAULT 0,
+    MODIFY `price_ttc` DOUBLE NULL DEFAULT 0,
+    MODIFY `reduction` DOUBLE NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE `Option` MODIFY `price_ht` DOUBLE NULL DEFAULT 0,
+    MODIFY `price_ttc` DOUBLE NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE `Pack` MODIFY `price_ht` DOUBLE NULL DEFAULT 0,
+    MODIFY `price_ttc` DOUBLE NULL DEFAULT 0;

@@ -6,7 +6,7 @@ const secret = process.env.JWT_SECRET;
 
 export const newToken = (user) => {
   return jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '15m',
+    expiresIn: '100d',
   });
 };
 
@@ -38,7 +38,6 @@ export const signup = async (req, res) => {
     const token = newToken(user);
     return res.status(201).send({ token });
   } catch (error) {
-    console.error(error.meta.target);
     if (error.meta.target === 'mail_UNIQUE') {
       return res.status(409).send({ message: 'Cet utilisateur existe déjà' });
     }
@@ -84,7 +83,7 @@ export const signin = async (req, res) => {
     return res.status(201).send({ token });
   } catch (error) {
     console.error(error);
-    res.status(500).end();
+    return res.status(500).end();
   }
 };
 
@@ -117,5 +116,12 @@ export const protect = async (req, res, next) => {
   delete user.password;
 
   req.user = user;
+  next();
+};
+
+export const checkUserRole = (req, res, next) => {
+  if (req.user.role_id !== 1) {
+    return res.status(401).send({ message: "Vous n'avez pas l'autorisation" });
+  }
   next();
 };

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
-import { signup, signin, protect } from './services/auth';
+import { signup, signin, protect, checkUserRole } from './services/auth';
 import morgan from 'morgan';
 import setupRoutes from './routes/index';
 const app = express();
@@ -18,7 +18,7 @@ app.post('/signup', signup);
 app.post('/signin', signin);
 
 // routes
-app.use('/api', protect);
+app.use('/api', [protect, checkUserRole]);
 setupRoutes(app);
 
 // server setup

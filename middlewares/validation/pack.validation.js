@@ -3,6 +3,7 @@ import Joi from 'joi';
 const packCreateSchema = Joi.object({
   user_id: Joi.number().required(),
   name: Joi.string().max(255).required(),
+  file_id: Joi.number(),
 });
 
 const packUpdateSchema = Joi.object({
