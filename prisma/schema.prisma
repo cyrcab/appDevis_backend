@@ -85,7 +85,6 @@ model File {
   price_ht              Float?    @default(0)
   price_ttc             Float?    @default(0)
   reduction             Float?    @default(0)
-  creation_confirmed    Boolean   @default(false) @db.TinyInt()
   identification_number String    @db.VarChar(255)
   user                  User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_User")
   customer              Customer  @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Estimate_customer")

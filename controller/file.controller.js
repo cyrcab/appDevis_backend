@@ -10,26 +10,14 @@ export async function createFile(req, res, next) {
     const dateCreation = formatDate(new Date());
     const billIdentificationNumber = await getBillIdentificationNumber(dateCreation);
     const estimateIdentificationNumber = await getEstimateIdentificationNumber(dateCreation);
-    let fileToCreate;
-    const { reduction } = req.body;
-    if (req.body.creation_confirmed) {
-      fileToCreate = await prisma.file.create({
-        data: {
-          ...req.body,
-          created_at: dateCreation,
-          identification_number:
-            req.body.type === 'bill' ? billIdentificationNumber : estimateIdentificationNumber,
-        },
-      });
-    } else {
-      fileToCreate = await prisma.file.create({
-        data: {
-          ...req.body,
-          created_at: dateCreation,
-          identification_number: estimateIdentificationNumber,
-        },
-      });
-    }
+    const fileToCreate = await prisma.file.create({
+      data: {
+        ...req.body,
+        created_at: dateCreation,
+        identification_number:
+          req.body.type === 'bill' ? billIdentificationNumber : estimateIdentificationNumber,
+      },
+    });
     if (!fileToCreate) {
       return res.status(400).end();
     }
