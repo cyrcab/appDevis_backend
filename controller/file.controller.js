@@ -10,14 +10,36 @@ export async function createFile(req, res, next) {
     const dateCreation = formatDate(new Date());
     const billIdentificationNumber = await getBillIdentificationNumber(dateCreation);
     const estimateIdentificationNumber = await getEstimateIdentificationNumber(dateCreation);
-    const fileToCreate = await prisma.file.create({
+    let fileToCreate;
+    fileToCreate = await prisma.file.create({
       data: {
         ...req.body,
         created_at: dateCreation,
         identification_number:
           req.body.type === 'bill' ? billIdentificationNumber : estimateIdentificationNumber,
       },
+      include: {
+        pack: true,
+      },
     });
+
+    let priceHt = 0;
+    let priceTtc = 0;
+    if (fileToCreate.pack[0]) {
+      priceHt = fileToCreate.pack.reduce((acc, cur) => acc + cur.price_ht, 0);
+      priceTtc = priceHt + priceHt * 0.2 - fileToCreate.reduction;
+    }
+    if (priceHt !== 0 && priceTtc !== 0) {
+      fileToCreate = await prisma.file.update({
+        where: {
+          id: fileToCreate.id,
+        },
+        data: {
+          price_ht: priceHt,
+          price_ttc: priceTtc,
+        },
+      });
+    }
     if (!fileToCreate) {
       return res.status(400).end();
     }
