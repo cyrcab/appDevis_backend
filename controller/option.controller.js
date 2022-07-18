@@ -1,5 +1,6 @@
 import prisma from '../helpers/prismaClient';
 import formatDate from '../helpers/formatDate';
+import priceCalcul from '../services/priceCalcul';
 
 async function handleCreateOption(req, res, next) {
   try {
@@ -25,7 +26,10 @@ async function handleCreateOption(req, res, next) {
           price_ttc: price_ht + price_ht * 0.2,
         },
       });
-      await prisma.pack.update({
+      if (!optionCreated) {
+        return res.status(400).end();
+      }
+      const packUpdated = await prisma.pack.update({
         where: {
           id: pack.id,
         },
@@ -33,14 +37,32 @@ async function handleCreateOption(req, res, next) {
           price_ht: pack.price_ht + optionCreated.price_ht,
           price_ttc: pack.price_ttc + (price_ht + price_ht * 0.2),
         },
+        include: {
+          file: true,
+        },
       });
-      res.status(201).json(optionCreated);
+      
+      if (!packUpdated) {
+        return res.status(400).end();
+      }
+
+      if (packUpdated.file_id) {
+        const fileUpdated = priceCalcul(
+          packUpdated.file_id,
+          packUpdated.file.pack,
+          packUpdated.file.reduction
+        );
+        if (!fileUpdated) {
+          return res.status(400).end();
+        }
+      }
+      return res.status(201).json(optionCreated);
     } else {
-      res.status(404).json({ message: "Il n'y a pas de pack avec cet id" });
+      return res.status(404).json({ message: "Il n'y a pas de pack avec cet id" });
     }
   } catch (error) {
-    console.error(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
@@ -80,8 +102,8 @@ async function handleGetUniqueOption(req, res, next) {
       res.status(404).json({ message: `no option found with id : ${id}`, isFound: false });
     }
   } catch (error) {
-    console.error(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
@@ -105,8 +127,8 @@ async function handleDeleteOption(req, res, next) {
       res.status(404).json({ message: 'no option with this id' });
     }
   } catch (error) {
-    console.error(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
@@ -162,8 +184,8 @@ async function handleUpdateOption(req, res, next) {
       });
     }
   } catch (error) {
-    console.error(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
