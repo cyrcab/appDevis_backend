@@ -125,7 +125,7 @@ export async function updateFile(req, res, next) {
         fileUpdated.reduction
       );
 
-      if (priceUpdated) {
+      if (!priceUpdated) {
         return res.status(400).end();
       }
 
