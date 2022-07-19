@@ -49,7 +49,7 @@ async function handleCreateOption(req, res, next) {
 
       return res.status(201).json({ data: optionCreated });
     } else {
-      return res.status(404).json({ message: "Il n'y a pas de pack avec cet id" });
+      return res.status(404).end();
     }
   } catch (error) {
     next(error);
@@ -90,7 +90,7 @@ async function handleGetUniqueOption(req, res, next) {
     if (option) {
       res.status(200).json({ data: option });
     } else {
-      res.status(404).json({ message: `no option found with id : ${id}` });
+      res.status(404).end();
     }
   } catch (error) {
     next(error);
@@ -110,8 +110,9 @@ async function handleDeleteOption(req, res, next) {
       },
     });
     if (!option) {
-      res.status(404).json({ message: 'no option with this id' });
+      res.status(404).end();
     }
+
     const optionToDelete = await prisma.option.delete({
       where: { id: option.id },
     });
@@ -156,9 +157,7 @@ async function handleUpdateOption(req, res, next) {
 
     const { price_ht } = req.body;
     if (!option) {
-      res.status(404).json({
-        message: `option with id : ${id} does not exist`,
-      });
+      res.status(404).end();
     }
     const updatedOption = await prisma.option.update({
       where: { id: option.id },
