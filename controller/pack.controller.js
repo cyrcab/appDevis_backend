@@ -94,10 +94,29 @@ async function handleDeletePack(req, res, next) {
 
     const packToDelete = await prisma.pack.delete({
       where: { id: pack.id },
+      include: {
+        file: {
+          include: {
+            pack: true,
+          },
+        },
+      },
     });
     if (!packToDelete) {
       return res.status(400).end();
     }
+
+    const priceUpdated = await calculPriceAndUpdate(
+      packToDelete.file_id,
+      packToDelete.file.pack,
+      packToDelete.file.reduction,
+      packToDelete.id
+    );
+
+    if (!priceUpdated) {
+      return res.status(400).json({ message: 'An error occurred while updating file price' });
+    }
+
     return res.status(200).json({
       message: `pack with id : ${id} correctly deleted`,
     });
