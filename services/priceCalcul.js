@@ -1,12 +1,12 @@
 import prisma from '../helpers/prismaClient';
 
-const calculPriceAndUpdate = async (id, pack, reduction) => {
+const calculPriceAndUpdate = async (id, packs, reduction) => {
   let priceHt = 0;
   let priceTtc = 0;
   let fileToUpdate;
 
-  if (pack[0]) {
-    priceHt = pack.reduce((acc, cur) => acc + cur.price_ht, 0);
+  if (packs[0]) {
+    priceHt = packs.reduce((acc, cur) => acc + cur.price_ht, 0);
     priceTtc = priceHt + priceHt * 0.2 - reduction;
   }
   if (priceHt !== 0 && priceTtc !== 0) {

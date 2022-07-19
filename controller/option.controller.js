@@ -1,6 +1,6 @@
 import prisma from '../helpers/prismaClient';
 import formatDate from '../helpers/formatDate';
-import priceCalcul from '../services/priceCalcul';
+import updateFilePrice from '../services/updateFilePrice';
 
 async function handleCreateOption(req, res, next) {
   try {
@@ -29,33 +29,17 @@ async function handleCreateOption(req, res, next) {
       if (!optionCreated) {
         return res.status(400).end();
       }
-      const packUpdated = await prisma.pack.update({
-        where: {
-          id: pack.id,
-        },
-        data: {
-          price_ht: pack.price_ht + optionCreated.price_ht,
-          price_ttc: pack.price_ttc + (price_ht + price_ht * 0.2),
-        },
-        include: {
-          file: true,
-        },
-      });
-      
-      if (!packUpdated) {
+      const fileIsUpdated = updateFilePrice(pack, optionCreated);
+
+      if (!fileIsUpdated) {
+        await prisma.option.delete({
+          where: {
+            id: optionCreated.id,
+          },
+        });
         return res.status(400).end();
       }
 
-      if (packUpdated.file_id) {
-        const fileUpdated = priceCalcul(
-          packUpdated.file_id,
-          packUpdated.file.pack,
-          packUpdated.file.reduction
-        );
-        if (!fileUpdated) {
-          return res.status(400).end();
-        }
-      }
       return res.status(201).json(optionCreated);
     } else {
       return res.status(404).json({ message: "Il n'y a pas de pack avec cet id" });

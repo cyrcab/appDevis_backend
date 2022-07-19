@@ -98,6 +98,9 @@ export async function updateFile(req, res, next) {
       where: {
         id: parseInt(id),
       },
+      include: {
+        pack: true,
+      },
     });
     if (file) {
       const fileUpdated = await prisma.file.update({
@@ -112,17 +115,21 @@ export async function updateFile(req, res, next) {
         },
       });
 
+      if (!fileUpdated) {
+        return res.status(400).end();
+      }
+
       let priceUpdated = await calculPriceAndUpdate(
         fileUpdated.id,
         fileUpdated.pack,
         fileUpdated.reduction
       );
 
-      if (!fileUpdated || !priceUpdated) {
+      if (priceUpdated) {
         return res.status(400).end();
-      } else {
-        return res.status(200).json({ data: fileUpdated });
       }
+
+      return res.status(200).json({ data: fileUpdated });
     } else {
       return res.status(404).end();
     }
