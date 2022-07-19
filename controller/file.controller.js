@@ -23,15 +23,23 @@ export async function createFile(req, res, next) {
         pack: true,
       },
     });
-    let priceUpdated = await calculPriceAndUpdate(
-      fileToCreate.id,
-      fileToCreate.pack,
-      fileToCreate.reduction
-    );
-
-    if (!fileToCreate || !priceUpdated) {
+    if (!fileToCreate) {
       return res.status(400).end();
     }
+
+    // on regarde si la liste que l'on créé contient des pack lors de la création
+    // pour mettre à jour le prix total du fichier
+    if (fileToCreate.pack[0]) {
+      const priceUpdated = await calculPriceAndUpdate(
+        fileToCreate.id,
+        fileToCreate.pack,
+        fileToCreate.reduction
+      );
+      if (!priceUpdated) {
+        return res.status(400).end();
+      }
+    }
+
     return res.status(201).json({ data: fileToCreate });
   } catch (e) {
     next(e);
@@ -90,6 +98,9 @@ export async function updateFile(req, res, next) {
       where: {
         id: parseInt(id),
       },
+      include: {
+        pack: true,
+      },
     });
     if (file) {
       const fileUpdated = await prisma.file.update({
@@ -104,17 +115,21 @@ export async function updateFile(req, res, next) {
         },
       });
 
+      if (!fileUpdated) {
+        return res.status(400).end();
+      }
+
       let priceUpdated = await calculPriceAndUpdate(
         fileUpdated.id,
         fileUpdated.pack,
         fileUpdated.reduction
       );
 
-      if (!fileUpdated || !priceUpdated) {
+      if (!priceUpdated) {
         return res.status(400).end();
-      } else {
-        return res.status(200).json({ data: fileUpdated });
       }
+
+      return res.status(200).json({ data: fileUpdated });
     } else {
       return res.status(404).end();
     }
