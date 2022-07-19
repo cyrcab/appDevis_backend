@@ -1,6 +1,6 @@
 import prisma from '../helpers/prismaClient';
 
-const calculPriceAndUpdate = async (id, packs, reduction) => {
+const calculPriceAndUpdate = async (fileId, packs, reduction) => {
   let priceHt = 0;
   let priceTtc = 0;
   let fileToUpdate;
@@ -11,7 +11,7 @@ const calculPriceAndUpdate = async (id, packs, reduction) => {
   }
   fileToUpdate = await prisma.file.update({
     where: {
-      id: id,
+      id: fileId,
     },
     data: {
       price_ht: priceHt,

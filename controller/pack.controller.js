@@ -1,5 +1,6 @@
 import prisma from '../helpers/prismaClient.js';
 import formatDate from '../helpers/formatDate';
+import calculPriceAndUpdate from '../services/priceCalcul';
 
 async function handleCreatePack(req, res, next) {
   try {
@@ -16,28 +17,45 @@ async function handleCreatePack(req, res, next) {
         created_at: dateCreation,
         created_by: userName,
       },
+      include: {
+        file: {
+          include: {
+            pack: true,
+          },
+        },
+      },
     });
 
-    if (packToCreate) {
-      res.status(201).json(packToCreate);
-    } else {
-      res.status(404).json({ message: 'error when creating pack' });
+    if (!packToCreate) {
+      return res.status(404).json({ message: 'error when creating pack' });
     }
+
+    if (packToCreate.file_id) {
+      const priceUpdated = await calculPriceAndUpdate(
+        packToCreate.file_id,
+        packToCreate.file.pack,
+        packToCreate.file.reduction
+      );
+
+      if (!priceUpdated) {
+        return res.status(400).json({ message: 'An error occurred while updating file price' });
+      }
+    }
+
+    return res.status(201).json({ data: packToCreate });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
     next(error);
+    return res.status(500).end();
   }
 }
 
 async function handleGetAllPacks(req, res, next) {
   try {
     const listOfPack = await prisma.pack.findMany();
-    res.status(200).json(listOfPack);
+    return res.status(200).json({ data: listOfPack });
   } catch (error) {
-    res.status(500).json({ error: error });
-    console.error(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
@@ -49,15 +67,13 @@ async function handleGetUniquePack(req, res, next) {
         id: parseInt(id),
       },
     });
-    if (pack) {
-      res.status(200).json(pack);
-    } else {
-      res.status(404).json({ message: `no pack found with id : ${id}` });
+    if (!pack) {
+      return res.status(404).json({ message: `no pack found with id : ${id}` });
     }
+    return res.status(200).json(pack);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
     next(error);
+    return res.status(500).json({ error: error });
   }
 }
 
@@ -70,22 +86,24 @@ async function handleDeletePack(req, res, next) {
       },
     });
 
-    if (pack) {
-      await prisma.pack.delete({
-        where: { id: pack.id },
-      });
-      res.status(200).json({
-        message: `pack with id : ${id} correctly deleted`,
-      });
-    } else {
+    if (!pack) {
       res.status(404).json({
         message: `pack with id : ${id} does not exist`,
       });
     }
+
+    const packToDelete = await prisma.pack.delete({
+      where: { id: pack.id },
+    });
+    if (!packToDelete) {
+      return res.status(400).end();
+    }
+    return res.status(200).json({
+      message: `pack with id : ${id} correctly deleted`,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
     next(error);
+    return res.status(500).json({ error: error });
   }
 }
 
@@ -94,36 +112,41 @@ async function handleUpdatePack(req, res, next) {
     const updateDate = formatDate(new Date());
     const { id } = req.params;
     const dataToUpdate = req.body;
+
     const pack = await prisma.pack.findUnique({
       where: {
         id: parseInt(id),
       },
     });
+
     const user = await prisma.user.findUnique({
       where: {
         id: req.body.user_id,
       },
     });
     const userName = user.firstName + ' ' + user.lastName;
-    if (pack) {
-      const updatedPack = await prisma.pack.update({
-        where: { id: pack.id },
-        data: {
-          ...dataToUpdate,
-          updated_at: updateDate,
-          updated_by: userName,
-        },
-      });
-      res.status(200).json({ message: 'pack updated', pack: { ...pack, ...updatedPack } });
-    } else {
-      res.status(404).json({
+
+    if (!pack) {
+      return res.status(404).json({
         message: `pack with id : ${id} does not exist`,
       });
     }
+    const updatedPack = await prisma.pack.update({
+      where: { id: pack.id },
+      data: {
+        ...dataToUpdate,
+        updated_at: updateDate,
+        updated_by: userName,
+      },
+    });
+
+    if (!updatedPack) {
+      return res.status(400).end();
+    }
+    return res.status(200).json({ data: { ...pack, ...updatedPack } });
   } catch (error) {
-    res.status(500).json({ error: error });
-    console.error(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
