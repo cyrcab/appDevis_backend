@@ -26,7 +26,7 @@ async function getUniqueUser(req, res, next) {
       delete user.password;
       return res.status(200).json({ data: user });
     } else {
-      return res.status(404).json({ message: `no user found with id : ${id}` });
+      return res.status(404).end();
     }
   } catch (error) {
     next(error);
@@ -45,7 +45,7 @@ async function createUser(req, res, next) {
     });
 
     if (userExist) {
-      return res.status(409).json({ message: 'User already exist', isCreated: false });
+      return res.status(409).json({ message: 'User already exist'});
     } else {
       const hashedPassword = await hashPassword(password);
       const userToCreate = await prisma.user.create({
@@ -80,9 +80,7 @@ async function deleteUser(req, res, next) {
       });
       return res.status(200).json({ data: userToDelete });
     } else {
-      return res.status(404).json({
-        message: `user with id : ${id} does not exist`,
-      });
+      return res.status(404).end();
     }
   } catch (error) {
     next(error);
@@ -114,9 +112,7 @@ async function updateUser(req, res, next) {
       delete updatedUser.password;
       return res.status(200).json({ data: updatedUser });
     } else {
-      return res.status(404).json({
-        message: `user with id : ${id} does not exist`,
-      });
+      return res.status(404).end();
     }
   } catch (error) {
     next(error);
