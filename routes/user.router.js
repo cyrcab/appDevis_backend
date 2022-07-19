@@ -5,19 +5,15 @@ import {
   getUniqueUser,
   deleteUser,
   updateUser,
-  loginUser,
 } from '../controller/user.controller';
 import {
   userCreationValidation,
   userUpdateValidation,
-  userLoginValidation,
 } from '../middlewares/validation/user.validation';
 
 const userRouter = Router();
 
 userRouter.route('/').post([userCreationValidation, createUser]).get(getAllUsers);
-
-// userRouter.route('/signin').post([userLoginValidation, signup]);
 
 userRouter
   .route('/:id')

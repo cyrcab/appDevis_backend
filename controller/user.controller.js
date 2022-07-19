@@ -7,11 +7,10 @@ async function getAllUsers(req, res, next) {
   try {
     const listOfUsers = await prisma.user.findMany();
     listOfUsers.map((user) => delete user.password);
-    res.status(200).json(listOfUsers);
+    return res.status(200).json({ data: listOfUsers });
   } catch (error) {
-    res.status(500).json({ error: error });
-    console.log(error);
     next(error);
+    return res.status(500).end();
   }
 }
 
@@ -25,54 +24,13 @@ async function getUniqueUser(req, res, next) {
     });
     if (user) {
       delete user.password;
-      res.status(200).json(user);
+      return res.status(200).json({ data: user });
     } else {
-      res.status(404).json({ message: `no user found with id : ${id}` });
+      return res.status(404).json({ message: `no user found with id : ${id}` });
     }
   } catch (error) {
-    res.status(500).json({ error: error });
-    console.log(error);
     next(error);
-  }
-}
-
-async function loginUser(req, res, next) {
-  try {
-    const lastLogin = formatDate(new Date());
-    const { mail } = req.body;
-    const userExist = await prisma.user.findUnique({
-      where: {
-        mail: mail,
-      },
-    });
-    if (userExist) {
-      const isVerifiedPass = await verifyPassword(req.body.password, userExist.password);
-      if (isVerifiedPass) {
-        const token = generateToken(userExist);
-        await prisma.user.update({
-          where: {
-            id: userExist.id,
-          },
-          data: {
-            last_login: lastLogin,
-          },
-        });
-        delete userExist.password;
-        res.status(201).json({
-          message: 'User connected',
-          ...userExist,
-          userToken: token,
-        });
-      } else {
-        res.status(401).json({ message: 'Incorrect password' });
-      }
-    } else {
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error });
-    console.error(error);
-    next(error);
+    return res.status(500).end();
   }
 }
 
@@ -87,7 +45,7 @@ async function createUser(req, res, next) {
     });
 
     if (userExist) {
-      res.status(409).json({ message: 'User already exist', isCreated: false });
+      return res.status(409).json({ message: 'User already exist', isCreated: false });
     } else {
       const hashedPassword = await hashPassword(password);
       const userToCreate = await prisma.user.create({
@@ -98,12 +56,11 @@ async function createUser(req, res, next) {
         },
       });
       delete userToCreate.password;
-      res.status(201).json({ userToCreate, message: 'user created with succes' });
+      return res.status(201).json({ data: userToCreate });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: 'error when creating user' });
     next(error);
+    return res.status(500).end();
   }
 }
 async function deleteUser(req, res, next) {
@@ -116,23 +73,20 @@ async function deleteUser(req, res, next) {
     });
 
     if (user) {
-      await prisma.user.delete({
+      const userToDelete = await prisma.user.delete({
         where: {
           id: user.id,
         },
       });
-      res.status(200).json({
-        message: `user with id ${id} correctly deleted`,
-      });
+      return res.status(200).json({ data: userToDelete });
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         message: `user with id : ${id} does not exist`,
       });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
     next(error);
+    return res.status(500).end();
   }
 }
 
@@ -158,17 +112,16 @@ async function updateUser(req, res, next) {
         },
       });
       delete updatedUser.password;
-      res.status(200).json(updatedUser);
+      return res.status(200).json({ data: updatedUser });
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         message: `user with id : ${id} does not exist`,
       });
     }
   } catch (error) {
     next(error);
-    res.status(500).json({ error: error });
-    console.error(error);
+    return res.status(500).end();
   }
 }
 
-export { createUser, getAllUsers, getUniqueUser, deleteUser, updateUser, loginUser };
+export { createUser, getAllUsers, getUniqueUser, deleteUser, updateUser };
