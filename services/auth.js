@@ -2,11 +2,12 @@ import jwt from 'jsonwebtoken';
 import { hashPassword, verifyPassword } from '../services/hashPassword';
 import formatDate from '../helpers/formatDate';
 import prisma from '../helpers/prismaClient';
+import randtoken from 'rand-token';
 const secret = process.env.JWT_SECRET;
 
 export const newToken = (user) => {
   return jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '100d',
+    expiresIn: '60s',
   });
 };
 
@@ -18,6 +19,11 @@ export const verifyToken = (token) => {
     });
   });
 };
+
+export const getRefreshToken = (user) =>
+  jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
+    expiresIn: '30d',
+  });
 
 export const signup = async (req, res) => {
   if (!req.body.mail || !req.body.password) {
@@ -80,7 +86,22 @@ export const signin = async (req, res) => {
     }
 
     const token = newToken(user);
-    return res.status(201).send({ token });
+    const decodeAccessToken = jwt.decode(token);
+    const accessTokenExpiresAt = decodeAccessToken.exp;
+    const refreshToken = getRefreshToken(user);
+
+    const storedRefreshToken = await prisma.token.create({
+      data: {
+        refreshToken: refreshToken,
+        user_id: user.id,
+      },
+    });
+
+    if (!storedRefreshToken) {
+      return res.status(400).send('La création du token a échoué');
+    }
+
+    return res.status(201).send({ token, expiresAt: accessTokenExpiresAt, refreshToken });
   } catch (error) {
     console.error(error);
     return res.status(500).end();
