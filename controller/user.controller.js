@@ -1,4 +1,5 @@
 import prisma from '../helpers/prismaClient.js';
+import jwt from 'jsonwebtoken';
 import formatDate from '../helpers/formatDate';
 import { newToken } from '../services/auth';
 import { hashPassword, verifyPassword } from '../services/hashPassword';
@@ -45,19 +46,34 @@ async function createUser(req, res, next) {
     });
 
     if (userExist) {
-      return res.status(409).json({ message: 'User already exist'});
-    } else {
-      const hashedPassword = await hashPassword(password);
-      const userToCreate = await prisma.user.create({
-        data: {
-          ...req.body,
-          created_at: dateCreation,
-          password: hashedPassword,
-        },
-      });
-      delete userToCreate.password;
-      return res.status(201).json({ data: userToCreate });
+      return res.status(409).json({ message: 'User already exist' });
     }
+    const hashedPassword = await hashPassword(password);
+    const userToCreate = await prisma.user.create({
+      data: {
+        ...req.body,
+        created_at: dateCreation,
+        password: hashedPassword,
+      },
+    });
+
+    if (!userToCreate) {
+      return res.status(400).end();
+    }
+
+    const accesToken = newToken(userToCreate);
+    const decodeToken = jwt.decode(accesToken);
+    const expiresAt = decodeToken.exp;
+
+    delete userToCreate.password;
+    return res
+      .status(201)
+      .json({
+        data: userToCreate,
+        accesToken,
+        expiresAt,
+        refreshToken: createRefreshToken(userToCreate),
+      });
   } catch (error) {
     next(error);
     return res.status(500).end();

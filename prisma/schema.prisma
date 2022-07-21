@@ -99,3 +99,12 @@ model Role {
   Name String @db.VarChar(255)
   User User[]
 }
+
+model Token {
+  id           Int    @id @default(autoincrement()) @db.UnsignedInt
+  refreshToken String @unique(map: "refreshToken_UNIQUE") @db.VarChar(320)
+  user_id      Int    @db.UnsignedInt
+
+  @@unique(fields: [refreshToken], name: "token")
+  @@index([user_id], map: "fk_Token_User_idx")
+}
