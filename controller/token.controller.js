@@ -35,7 +35,6 @@ export async function refreshToken(req, res, next) {
     const payload = await verifyToken(refreshToken);
 
     if (new Date(payload.exp * 1000) < new Date(Date.now())) {
-      console.log('Date dépassée');
       return res.status(403).json({ message: 'Merci de vous reconnecter' });
     }
 
@@ -43,6 +42,38 @@ export async function refreshToken(req, res, next) {
     return res.status(200).json({ accessToken: token });
   } catch (error) {
     next(error);
+    return res.status(500).end();
+  }
+}
+
+export async function deleteToken(req, res, next) {
+  const refreshToken = req.params.token;
+
+  try {
+    const existingToken = await prisma.token.findUnique({
+      where: {
+        refreshToken: refreshToken,
+      },
+    });
+
+    if (!existingToken) {
+      return res.status(400).end();
+    }
+
+    const deletedToken = await prisma.token.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+
+    if (!deletedToken) {
+      return res.status(400).end();
+    }
+
+    return res.status(200).json({ deleted: true });
+  } catch (error) {
+    next(error);
+    console.error(error);
     return res.status(500).end();
   }
 }
