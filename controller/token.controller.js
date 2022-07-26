@@ -39,7 +39,7 @@ export async function refreshToken(req, res, next) {
     }
 
     const token = newToken(existingUser);
-    return res.status(200).json({ accessToken: token });
+    return res.status(200).json({ accessToken: token, userId: existingUser.id });
   } catch (error) {
     next(error);
     return res.status(500).end();

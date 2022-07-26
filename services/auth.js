@@ -7,7 +7,7 @@ const secret = process.env.JWT_SECRET;
 
 export const newToken = (user) => {
   return jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '30s',
+    expiresIn: '30m',
   });
 };
 
@@ -122,7 +122,6 @@ export const protect = async (req, res, next) => {
 
   try {
     payload = await verifyToken(token);
-    console.log(payload);
   } catch (error) {
     return res.status(401).end();
   }

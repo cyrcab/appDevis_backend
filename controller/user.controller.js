@@ -25,7 +25,7 @@ async function getUniqueUser(req, res, next) {
     });
     if (user) {
       delete user.password;
-      return res.status(200).json({ data: user });
+      return res.status(200).json(user);
     } else {
       return res.status(404).end();
     }
