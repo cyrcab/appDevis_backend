@@ -7,7 +7,7 @@ const secret = process.env.JWT_SECRET;
 
 export const newToken = (user) => {
   return jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '1h',
+    expiresIn: '30m',
   });
 };
 
@@ -85,8 +85,8 @@ export const signin = async (req, res) => {
       });
     }
 
-    const token = newToken(user);
-    const decodeAccessToken = jwt.decode(token);
+    const accessToken = newToken(user);
+    const decodeAccessToken = jwt.decode(accessToken);
     const accessTokenExpiresAt = decodeAccessToken.exp;
     const refreshToken = getRefreshToken(user);
 
@@ -101,7 +101,9 @@ export const signin = async (req, res) => {
       return res.status(400).send('La création du token a échoué');
     }
 
-    return res.status(201).send({ token, expiresAt: accessTokenExpiresAt, refreshToken });
+    return res
+      .status(201)
+      .send({ accessToken, expiresAt: accessTokenExpiresAt, refreshToken, userId: user.id });
   } catch (error) {
     console.error(error);
     return res.status(500).end();
