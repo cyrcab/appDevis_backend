@@ -42,7 +42,7 @@ async function handleCreatePack(req, res, next) {
       }
     }
 
-    return res.status(201).json({ data: packToCreate });
+    return res.status(201).json(packToCreate);
   } catch (error) {
     next(error);
     return res.status(500).end();
@@ -66,6 +66,9 @@ async function handleGetUniquePack(req, res, next) {
       where: {
         id: parseInt(id),
       },
+      include: {
+        option: true,
+      },
     });
     if (!pack) {
       return res.status(404).json({ message: `no pack found with id : ${id}` });
@@ -80,6 +83,7 @@ async function handleGetUniquePack(req, res, next) {
 async function handleDeletePack(req, res, next) {
   try {
     const { id } = req.params;
+    console.log(id);
     const pack = await prisma.pack.findUnique({
       where: {
         id: parseInt(id),
@@ -87,7 +91,7 @@ async function handleDeletePack(req, res, next) {
     });
 
     if (!pack) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `pack with id : ${id} does not exist`,
       });
     }
@@ -106,20 +110,20 @@ async function handleDeletePack(req, res, next) {
       return res.status(400).end();
     }
 
-    const priceUpdated = await calculPriceAndUpdate(
-      packToDelete.file_id,
-      packToDelete.file.pack,
-      packToDelete.file.reduction,
-      packToDelete.id
-    );
+    if (packToDelete.file_id) {
+      const priceUpdated = await calculPriceAndUpdate(
+        packToDelete.file_id,
+        packToDelete.file.pack,
+        packToDelete.file.reduction,
+        packToDelete.id
+      );
 
-    if (!priceUpdated) {
-      return res.status(400).json({ message: 'An error occurred while updating file price' });
+      if (!priceUpdated) {
+        return res.status(400).json({ message: 'An error occurred while updating file price' });
+      }
     }
 
-    return res.status(200).json({
-      message: `pack with id : ${id} correctly deleted`,
-    });
+    return res.status(200).json(packToDelete);
   } catch (error) {
     next(error);
     return res.status(500).json({ error: error });

@@ -8,6 +8,7 @@ import calculPriceAndUpdate from '../services/priceCalcul';
 
 export async function createFile(req, res, next) {
   try {
+    console.log(req.body);
     const dateCreation = formatDate(new Date());
     const billIdentificationNumber = await getBillIdentificationNumber(dateCreation);
     const estimateIdentificationNumber = await getEstimateIdentificationNumber(dateCreation);
@@ -47,13 +48,37 @@ export async function createFile(req, res, next) {
   }
 }
 
+export async function getUniqFile(req, res, next) {
+  try {
+    const { id } = req.params;
+    const file = await prisma.file.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      include: {
+        pack: true,
+      },
+    });
+    if (!file) {
+      return res.status(404).end();
+    }
+    return res.status(200).json(file);
+  } catch (error) {
+    next(error);
+    return res.status(500).end();
+  }
+}
+
 export async function getManyFile(req, res, next) {
   try {
     const list = await prisma.file.findMany({
       take: 10,
+      include: {
+        customer: true,
+      },
     });
     if (list.length >= 0) {
-      return res.status(200).json({ data: list });
+      return res.status(200).json(list);
     } else {
       return res.status(400).end();
     }
