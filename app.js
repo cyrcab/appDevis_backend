@@ -1,26 +1,24 @@
 import 'dotenv/config';
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
-import { signup, signin, protect, checkUserRole } from './services/auth';
-import { refreshToken, deleteToken } from './controller/token.controller';
+import cookieParser from 'cookie-parser';
+import { signup, signin, protect, checkUserRole, revokeToken } from './services/auth';
 import morgan from 'morgan';
 import setupRoutes from './routes/index';
 const app = express();
 const { SERVER_PORT } = process.env;
 
 // réglage des cors
-app.use(cors());
+app.use(cors({ credentials: true, origin: 'http://192.168.1.10:19006' }));
 app.use(json());
 app.use(morgan('dev'));
+app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 
 // auth
 app.post('/signup', signup);
 app.post('/signin', signin);
-app.delete('/signout/:token', deleteToken);
-
-// refresh token
-app.post('/api/refreshToken', refreshToken);
+app.post('/signout', revokeToken);
 
 // routes
 app.use('/api', [protect, checkUserRole]);

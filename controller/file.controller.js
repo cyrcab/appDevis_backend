@@ -8,7 +8,6 @@ import calculPriceAndUpdate from '../services/priceCalcul';
 
 export async function createFile(req, res, next) {
   try {
-    console.log(req.body);
     const dateCreation = formatDate(new Date());
     const billIdentificationNumber = await getBillIdentificationNumber(dateCreation);
     const estimateIdentificationNumber = await getEstimateIdentificationNumber(dateCreation);

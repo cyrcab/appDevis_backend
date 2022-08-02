@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { hashPassword, verifyPassword } from '../services/hashPassword';
 import formatDate from '../helpers/formatDate';
 import prisma from '../helpers/prismaClient';
-import randtoken from 'rand-token';
 const secret = process.env.JWT_SECRET;
 
 export const newToken = (user) => {
@@ -19,11 +18,6 @@ export const verifyToken = (token) => {
     });
   });
 };
-
-export const getRefreshToken = (user) =>
-  jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '30d',
-  });
 
 export const signup = async (req, res) => {
   if (!req.body.mail || !req.body.password) {
@@ -52,6 +46,7 @@ export const signup = async (req, res) => {
 };
 
 export const signin = async (req, res) => {
+  console.log(req.body);
   if (!req.body.mail || !req.body.password) {
     return res.status(400).send({ message: 'email and password required' });
   }
@@ -86,24 +81,10 @@ export const signin = async (req, res) => {
     }
 
     const accessToken = newToken(user);
-    const decodeAccessToken = jwt.decode(accessToken);
-    const accessTokenExpiresAt = decodeAccessToken.exp;
-    const refreshToken = getRefreshToken(user);
 
-    const storedRefreshToken = await prisma.token.create({
-      data: {
-        refreshToken: refreshToken,
-        user_id: user.id,
-      },
-    });
+    delete user.password;
 
-    if (!storedRefreshToken) {
-      return res.status(400).send('La création du token a échoué');
-    }
-
-    return res
-      .status(201)
-      .send({ accessToken, expiresAt: accessTokenExpiresAt, refreshToken, userId: user.id });
+    return res.status(201).cookie('accessToken', accessToken, { httpOnly: true }).json(user);
   } catch (error) {
     console.error(error);
     return res.status(500).end();
@@ -111,19 +92,18 @@ export const signin = async (req, res) => {
 };
 
 export const protect = async (req, res, next) => {
-  const bearer = req.headers.authorization;
+  const { accessToken } = req.cookies;
 
-  if (!bearer || !bearer.startsWith('Bearer ')) {
-    return res.status(401).end();
-  }
-
-  const token = bearer.split('Bearer ')[1].trim();
   let payload;
 
+  if (!accessToken) {
+    return res.status(403).json({ message: "Vous n'avez pas l'autorisation" });
+  }
+
   try {
-    payload = await verifyToken(token);
+    payload = await verifyToken(accessToken);
   } catch (error) {
-    return res.status(401).end();
+    return res.status(401).json({ message: 'Veuillez vous reconnecter' });
   }
 
   const user = await prisma.user.findUnique({
@@ -140,6 +120,16 @@ export const protect = async (req, res, next) => {
 
   req.user = user;
   next();
+};
+
+export const revokeToken = async (req, res, next) => {
+  try {
+    return res.clearCookie('accessToken').sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    next(error);
+    return res.status(500).end();
+  }
 };
 
 export const checkUserRole = (req, res, next) => {
