@@ -132,6 +132,38 @@ export const revokeToken = async (req, res, next) => {
   }
 };
 
+export const checkToken = async (req, res, next) => {
+  const { accessToken } = req.cookies;
+  let payload;
+  try {
+    if (!accessToken) {
+      return res.status(403).end();
+    }
+
+    payload = await verifyToken(accessToken);
+
+    if (!payload) {
+      return res.clearCookie('accessToken').status(403).end();
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: payload.id,
+      },
+    });
+
+    if (!user) {
+      return res.clearCookie('accessToken').status(403).end();
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    next(error);
+    console.error(error);
+    return res.status(500).end();
+  }
+};
+
 export const checkUserRole = (req, res, next) => {
   if (req.user.role_id !== 1) {
     return res.status(401).send({ message: "Vous n'avez pas l'autorisation" });

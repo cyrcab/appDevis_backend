@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { signup, signin, protect, checkUserRole, revokeToken } from './services/auth';
+import { signup, signin, protect, checkUserRole, revokeToken, checkToken } from './services/auth';
 import morgan from 'morgan';
 import setupRoutes from './routes/index';
 const app = express();
@@ -19,6 +19,7 @@ app.use(urlencoded({ extended: true }));
 app.post('/signup', signup);
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
+app.get('/check-token', checkToken);
 
 // routes
 app.use('/api', [protect, checkUserRole]);
