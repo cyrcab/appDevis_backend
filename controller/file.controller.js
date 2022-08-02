@@ -96,13 +96,13 @@ export async function deleteFile(req, res, next) {
       },
     });
     if (file) {
-      const file = await prisma.file.delete({
+      const fileToDelete = await prisma.file.delete({
         where: {
           id: parseInt(id),
         },
       });
-      if (file) {
-        return res.status(200).json({ data: file });
+      if (fileToDelete) {
+        return res.status(200).json(file);
       } else {
         return res.status(400).end();
       }

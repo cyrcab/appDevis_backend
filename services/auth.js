@@ -143,7 +143,7 @@ export const checkToken = async (req, res, next) => {
     payload = await verifyToken(accessToken);
 
     if (!payload) {
-      return res.clearCookie('accessToken').status(403).end();
+      return res.clearCookie('accessToken');
     }
 
     const user = await prisma.user.findUnique({
@@ -159,8 +159,6 @@ export const checkToken = async (req, res, next) => {
     return res.status(200).json(user);
   } catch (error) {
     next(error);
-    console.error(error);
-    return res.status(500).end();
   }
 };
 
