@@ -47,7 +47,7 @@ async function handleCreateOption(req, res, next) {
         return res.status(400).end();
       }
 
-      return res.status(201).json({ data: optionCreated });
+      return res.status(201).json(optionCreated);
     } else {
       return res.status(404).end();
     }
@@ -129,7 +129,7 @@ async function handleDeleteOption(req, res, next) {
       });
       return res.status(400).end();
     }
-    res.status(200).json({ data: option });
+    res.status(200).json(option);
   } catch (error) {
     next(error);
     return res.status(500).end();
@@ -192,7 +192,7 @@ async function handleUpdateOption(req, res, next) {
     if (!packUpdated) {
       return res.status(400).end();
     }
-    res.status(200).json({ data: updatedOption });
+    res.status(200).json(updatedOption);
   } catch (error) {
     next(error);
     return res.status(500).end();
