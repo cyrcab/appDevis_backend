@@ -192,7 +192,7 @@ async function handleUpdateOption(req, res, next) {
     if (!packUpdated) {
       return res.status(400).end();
     }
-    res.status(200).json({ data: updatedOption });
+    res.status(200).json(updatedOption);
   } catch (error) {
     next(error);
     return res.status(500).end();

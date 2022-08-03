@@ -12,10 +12,21 @@ export async function createFile(req, res, next) {
     const billIdentificationNumber = await getBillIdentificationNumber(dateCreation);
     const estimateIdentificationNumber = await getEstimateIdentificationNumber(dateCreation);
     let fileToCreate;
+
+    const { user_id } = req.body;
+    // search the user who is creating this file
+    const user = await prisma.user.findUnique({
+      where: {
+        id: user_id,
+      },
+    });
+    const userName = user.firstName + ' ' + user.lastName;
+
     fileToCreate = await prisma.file.create({
       data: {
         ...req.body,
         created_at: dateCreation,
+        created_by: userName,
         identification_number:
           req.body.type === 'bill' ? billIdentificationNumber : estimateIdentificationNumber,
       },
@@ -40,7 +51,7 @@ export async function createFile(req, res, next) {
       }
     }
 
-    return res.status(201).json({ data: fileToCreate });
+    return res.status(201).json(fileToCreate);
   } catch (e) {
     next(e);
     return res.status(500).end();
@@ -74,6 +85,7 @@ export async function getManyFile(req, res, next) {
       take: 10,
       include: {
         customer: true,
+        pack: true,
       },
     });
     if (list.length >= 0) {
@@ -153,7 +165,7 @@ export async function updateFile(req, res, next) {
         return res.status(400).end();
       }
 
-      return res.status(200).json({ data: fileUpdated });
+      return res.status(200).json(fileUpdated);
     } else {
       return res.status(404).end();
     }

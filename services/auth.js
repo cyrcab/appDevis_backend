@@ -46,7 +46,6 @@ export const signup = async (req, res) => {
 };
 
 export const signin = async (req, res) => {
-  console.log(req.body);
   if (!req.body.mail || !req.body.password) {
     return res.status(400).send({ message: 'email and password required' });
   }
