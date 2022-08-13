@@ -1,32 +1,31 @@
 import * as pdf from 'html-pdf';
-import * as fs from 'fs';
-import * as path from 'path';
 
-var options = { format: 'Letter' };
-
-const document = {
-  html: `<!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="utf-8" />
-      <title>Hello world!</title>
-    </head>
-    <body>
-      <h1>User List</h1>
-      <!-- <ul>
-        {{#each users}}
-        <li>Name: {{this.name}}</li>
-        <li>Age: {{this.age}}</li>
-        <br />
-        {{/each}}
-      </ul> -->
-    </body>
-  </html>`,
-  path: './document/test.pdf',
-  type: '',
-};
+const options = { format: 'Letter' };
 
 export const createPdf = (req, res, next) => {
+  const datas = {
+    ...req.body,
+  };
+
+  const document = {
+    html: `<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Hello world!</title>
+      </head>
+      <body>
+        <h1>User List</h1>
+        <ul>
+          <li>${datas.price_ht}</li>
+          <br />
+        </ul>
+      </body>
+    </html>`,
+    path: './document/test.pdf',
+    type: '',
+  };
+
   try {
     pdf
       .create(document.html, options)

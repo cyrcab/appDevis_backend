@@ -12,7 +12,7 @@ const app = express();
 const { SERVER_PORT } = process.env;
 
 // réglage des cors
-app.use(cors({ credentials: true, origin: 'http://192.168.1.24:19006' }));
+app.use(cors({ credentials: true, origin: 'http://172.20.10.2:19006' }));
 app.use(json());
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -35,7 +35,6 @@ app.post('/upload-pdf', createPdf, async (req, res) => {
     var newPath = './services/pdf/uploads/test.pdf';
 
     const file = fs.readFileSync('./services/pdf/document/test.pdf');
-    console.log(file);
     if (!file) {
       res.send({
         status: false,
