@@ -8,7 +8,7 @@ async function getAllUsers(req, res, next) {
   try {
     const listOfUsers = await prisma.user.findMany();
     listOfUsers.map((user) => delete user.password);
-    return res.status(200).json({ data: listOfUsers });
+    return res.status(200).json(listOfUsers);
   } catch (error) {
     next(error);
     return res.status(500).end();
@@ -61,19 +61,8 @@ async function createUser(req, res, next) {
       return res.status(400).end();
     }
 
-    const accesToken = newToken(userToCreate);
-    const decodeToken = jwt.decode(accesToken);
-    const expiresAt = decodeToken.exp;
-
     delete userToCreate.password;
-    return res
-      .status(201)
-      .json({
-        data: userToCreate,
-        accesToken,
-        expiresAt,
-        refreshToken: createRefreshToken(userToCreate),
-      });
+    return res.status(201).json(userToCreate);
   } catch (error) {
     next(error);
     return res.status(500).end();
@@ -94,7 +83,7 @@ async function deleteUser(req, res, next) {
           id: user.id,
         },
       });
-      return res.status(200).json({ data: userToDelete });
+      return res.status(200).json(userToDelete);
     } else {
       return res.status(404).end();
     }
@@ -126,7 +115,7 @@ async function updateUser(req, res, next) {
         },
       });
       delete updatedUser.password;
-      return res.status(200).json({ data: updatedUser });
+      return res.status(200).json(updatedUser);
     } else {
       return res.status(404).end();
     }

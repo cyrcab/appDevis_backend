@@ -9,7 +9,7 @@ function formatDate(date) {
   const dateDay = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
   const dateMonth = date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
   const dateYear = date.getFullYear();
-  const newDateHourLocale = date.toLocaleTimeString();
+  const newDateHourLocale = date.toLocaleTimeString('fr-FR');
 
   const newDate = `${dateYear}-${dateMonth}-${dateDay}T${newDateHourLocale}.000Z`;
 
