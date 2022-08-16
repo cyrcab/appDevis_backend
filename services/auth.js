@@ -83,7 +83,10 @@ export const signin = async (req, res) => {
 
     delete user.password;
 
-    return res.status(201).cookie('accessToken', accessToken, { httpOnly: true }).json(user);
+    return res
+      .status(201)
+      .cookie('accessToken', accessToken, { httpOnly: true, secure: true })
+      .json(user);
   } catch (error) {
     console.error(error);
     return res.status(500).end();
