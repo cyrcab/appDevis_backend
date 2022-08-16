@@ -36,6 +36,14 @@ app.use(express.static('./services/pdf/uploads'));
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
 app.get('/check-token', checkToken);
+app.get('/', async (req, res, next) => {
+  try {
+    return res.status(200).send('ok');
+  } catch (error) {
+    next(error);
+    return res.status(500).end();
+  }
+});
 app.post('/upload-pdf', [
   protect,
   createPdf,
