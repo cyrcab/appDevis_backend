@@ -85,7 +85,7 @@ export const signin = async (req, res) => {
 
     return res
       .status(201)
-      .cookie('accessToken', accessToken, { httpOnly: true, secure: true, SameSite: 'none' })
+      .cookie('accessToken', accessToken, { httpOnly: true })
       .json(user);
   } catch (error) {
     console.error(error);
@@ -99,7 +99,7 @@ export const protect = async (req, res, next) => {
   let payload;
 
   if (!accessToken) {
-    return res.status(403).json({ message: "Vous n'avez pas l'autorisation" });
+    return res.status(456).json({ message: "Vous n'avez pas l'autorisation" });
   }
 
   try {
