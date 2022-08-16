@@ -8,6 +8,7 @@ import { signup, signin, protect, checkUserRole, revokeToken, checkToken } from 
 import morgan from 'morgan';
 import setupRoutes from './routes/index';
 import { createPdf } from './services/pdf/pdfGenerator.js';
+import { mailSender } from './services/mailer/mailSender';
 const app = express();
 const { SERVER_PORT } = process.env;
 
@@ -29,6 +30,7 @@ app.post('/signup', signup);
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
 app.get('/check-token', checkToken);
+app.post('/send-mail', mailSender);
 app.post('/upload-pdf', createPdf, async (req, res) => {
   try {
     var oldPath = './services/pdf/document/test.pdf';
