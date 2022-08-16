@@ -2,37 +2,15 @@ const roles = [
   {
     Name: 'Admin',
   },
-  {
-    Name: 'Sales',
-  },
-  {
-    Name: 'Guest',
-  },
 ];
 const users = [
   {
-    mail: 'exemple@mail.fr',
+    mail: 'admin@mail.fr',
     password:
-      '$argon2id$v=19$m=65536,t=5,p=1$Lkg7EVeCiXDvYUrh6OFsrw$cJ9Gz3NlHS/FDkgPSZvroqkUczpnCQx7dPzDemzGX8A',
-    firstName: 'Cyril',
-    lastName: 'Cabrolier',
+      '$argon2id$v=19$m=65536,t=5,p=1$5fHcVfQYCTVaKSWrA6LzUA$M4POlUs1M+EF6pXaCbWt0hZEW8VOKezwFeiHtuDeYI4',
+    firstName: 'admin',
+    lastName: 'admin',
     role_id: 1,
-  },
-  {
-    mail: 'sale@mail.fr',
-    password:
-      '$argon2id$v=19$m=65536,t=5,p=1$Lkg7EVeCiXDvYUrh6OFsrw$cJ9Gz3NlHS/FDkgPSZvroqkUczpnCQx7dPzDemzGX8A',
-    firstName: 'Claude',
-    lastName: 'Dubois',
-    role_id: 2,
-  },
-  {
-    mail: 'guest@mail.fr',
-    password:
-      '$argon2id$v=19$m=65536,t=5,p=1$Lkg7EVeCiXDvYUrh6OFsrw$cJ9Gz3NlHS/FDkgPSZvroqkUczpnCQx7dPzDemzGX8A',
-    firstName: 'Jules',
-    lastName: 'Benetto',
-    role_id: 3,
   },
 ];
 
