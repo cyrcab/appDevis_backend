@@ -25,7 +25,7 @@ app.use(
 app.use(express.static('./services/pdf/uploads'));
 
 // auth
-app.post('/signup', signup);
+// app.post('/signup', signup);
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
 app.get('/check-token', checkToken);
