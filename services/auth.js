@@ -67,6 +67,16 @@ export const signin = async (req, res) => {
 
     if (!match) {
       return res.status(401).send(invalid);
+    } else {
+      const lastLogin = formatDate(new Date());
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          last_login: lastLogin,
+        },
+      });
     }
 
     const accessToken = newToken(user);
