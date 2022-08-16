@@ -80,7 +80,7 @@ setupRoutes(app);
 
 // server setup
 const server = app.listen(SERVER_PORT || process.env.PORT, () => {
-  console.log(`Server is running on port ${SERVER_PORT}`);
+  console.log(`Server is running on port ${SERVER_PORT || process.env.PORT}`);
 });
 
 export default server;
