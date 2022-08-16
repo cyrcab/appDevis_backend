@@ -12,7 +12,7 @@ const app = express();
 const { SERVER_PORT } = process.env;
 
 // réglage des cors
-app.use(cors({ credentials: true, origin: 'http://172.20.10.2:19006' }));
+app.use(cors({ credentials: true, origin: 'https://app-devis-test.herokuapp.com/' }));
 app.use(json());
 app.use(morgan('dev'));
 app.use(cookieParser());
