@@ -1,5 +1,5 @@
-import prisma from '../helpers/prismaClient';
-import calculPriceAndUpdate from './priceCalcul';
+import prisma from '../helpers/prismaClient.js';
+import calculPriceAndUpdate from './priceCalcul.js';
 
 export const addPackPriceAndUpdate = async (pack, option) => {
   const packUpdated = await prisma.pack.update({

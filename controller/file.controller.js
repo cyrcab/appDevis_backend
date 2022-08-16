@@ -1,10 +1,10 @@
-import prisma from '../helpers/prismaClient';
-import formatDate from '../helpers/formatDate';
+import prisma from '../helpers/prismaClient.js';
+import formatDate from '../helpers/formatDate.js';
 import {
   getBillIdentificationNumber,
   getEstimateIdentificationNumber,
-} from '../helpers/getIdentificationNumber';
-import calculPriceAndUpdate from '../services/priceCalcul';
+} from '../helpers/getIdentificationNumber.js';
+import calculPriceAndUpdate from '../services/priceCalcul.js';
 
 export async function createFile(req, res, next) {
   try {

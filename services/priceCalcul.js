@@ -1,4 +1,4 @@
-import prisma from '../helpers/prismaClient';
+import prisma from '../helpers/prismaClient.js';
 
 const calculPriceAndUpdate = async (fileId, packs, reduction, packIdToDelete) => {
   let priceHt = 0;

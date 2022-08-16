@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { hashPassword, verifyPassword } from '../services/hashPassword';
-import formatDate from '../helpers/formatDate';
-import prisma from '../helpers/prismaClient';
+import { hashPassword, verifyPassword } from '../services/hashPassword.js';
+import formatDate from '../helpers/formatDate.js';
+import prisma from '../helpers/prismaClient.js';
 const secret = process.env.JWT_SECRET;
 
 export const newToken = (user) => {

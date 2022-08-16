@@ -1,6 +1,6 @@
 import prisma from '../helpers/prismaClient.js';
-import formatDate from '../helpers/formatDate';
-import calculPriceAndUpdate from '../services/priceCalcul';
+import formatDate from '../helpers/formatDate.js';
+import calculPriceAndUpdate from '../services/priceCalcul.js';
 
 async function handleCreatePack(req, res, next) {
   try {

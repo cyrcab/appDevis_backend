@@ -5,11 +5,11 @@ import {
   handleGetUniqueOption,
   handleDeleteOption,
   handleUpdateOption,
-} from '../controller/option.controller';
+} from '../controller/option.controller.js';
 import {
   optionCreationValidation,
   optionUpdateValidation,
-} from '../middlewares/validation/option.validation';
+} from '../middlewares/validation/option.validation.js';
 
 const answerRouter = Router();
 

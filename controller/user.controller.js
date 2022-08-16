@@ -1,8 +1,8 @@
 import prisma from '../helpers/prismaClient.js';
 import jwt from 'jsonwebtoken';
-import formatDate from '../helpers/formatDate';
-import { newToken } from '../services/auth';
-import { hashPassword, verifyPassword } from '../services/hashPassword';
+import formatDate from '../helpers/formatDate.js';
+import { newToken } from '../services/auth.js';
+import { hashPassword, verifyPassword } from '../services/hashPassword.js';
 
 async function getAllUsers(req, res, next) {
   try {
