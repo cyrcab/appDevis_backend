@@ -4,7 +4,14 @@ import cors from 'cors';
 import * as fs from 'fs';
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
-import { signup, signin, protect, checkUserRole, revokeToken, checkToken } from './services/auth.js';
+import {
+  signup,
+  signin,
+  protect,
+  checkUserRole,
+  revokeToken,
+  checkToken,
+} from './services/auth.js';
 import morgan from 'morgan';
 import setupRoutes from './routes/index.js';
 import { createPdf } from './services/pdf/pdfGenerator.js';
@@ -72,7 +79,7 @@ app.use('/api', [protect, checkUserRole]);
 setupRoutes(app);
 
 // server setup
-const server = app.listen(SERVER_PORT, () => {
+const server = app.listen(SERVER_PORT || process.env.SERVER_PORT, () => {
   console.log(`Server is running on port ${SERVER_PORT}`);
 });
 
