@@ -16,10 +16,10 @@ import morgan from 'morgan';
 import setupRoutes from './routes/index.js';
 import { createPdf } from './services/pdf/pdfGenerator.js';
 const app = express();
-const { SERVER_PORT } = process.env;
+const { SERVER_PORT, FRONT_ADRESS } = process.env;
 
 // réglage des cors
-app.use(cors({ credentials: true, origin: 'https://app-devis-test.herokuapp.com/' }));
+app.use(cors({ credentials: true, origin: FRONT_ADRESS }));
 app.use(json());
 app.use(morgan('dev'));
 app.use(cookieParser());
