@@ -1,2 +1,2 @@
 web : node app.js
-web: npx prisma migrate deploy
+web: npx prisma db push
