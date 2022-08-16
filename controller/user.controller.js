@@ -61,18 +61,11 @@ async function createUser(req, res, next) {
       return res.status(400).end();
     }
 
-    const accesToken = newToken(userToCreate);
-    const decodeToken = jwt.decode(accesToken);
-    const expiresAt = decodeToken.exp;
-
     delete userToCreate.password;
     return res
       .status(201)
       .json({
         data: userToCreate,
-        accesToken,
-        expiresAt,
-        refreshToken: createRefreshToken(userToCreate),
       });
   } catch (error) {
     next(error);
