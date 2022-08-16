@@ -85,7 +85,12 @@ export const signin = async (req, res) => {
 
     return res
       .status(201)
-      .cookie('accessToken', accessToken, { httpOnly: true, expire: 1 })
+      .cookie('accessToken', accessToken, {
+        httpOnly: true,
+        maxAge: 9999,
+        secure: true,
+        sameSite: 'None',
+      })
       .json(user);
   } catch (error) {
     console.error(error);
