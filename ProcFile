@@ -1,2 +1,1 @@
-web : node app.js
-resetBdd : npx prisma db seed
+web : node app.js npx prisma migrate deploy
