@@ -29,39 +29,43 @@ app.post('/signup', signup);
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
 app.get('/check-token', checkToken);
-app.post('/upload-pdf', createPdf, async (req, res) => {
-  try {
-    var oldPath = './services/pdf/document/test.pdf';
-    var newPath = './services/pdf/uploads/test.pdf';
+app.post('/upload-pdf', [
+  protect,
+  createPdf,
+  async (req, res) => {
+    try {
+      var oldPath = './services/pdf/document/test.pdf';
+      var newPath = './services/pdf/uploads/test.pdf';
 
-    const file = fs.readFileSync('./services/pdf/document/test.pdf');
-    if (!file) {
-      res.send({
-        status: false,
-        message: 'No file uploaded',
-      });
-    } else {
-      fs.rename(oldPath, newPath, function (err) {
-        if (err) throw err;
-        console.log('Successfully renamed - AKA moved!');
-      });
+      const file = fs.readFileSync('./services/pdf/document/test.pdf');
+      if (!file) {
+        res.send({
+          status: false,
+          message: 'No file uploaded',
+        });
+      } else {
+        fs.rename(oldPath, newPath, function (err) {
+          if (err) throw err;
+          console.log('Successfully renamed - AKA moved!');
+        });
 
-      //send response
-      res.send({
-        status: true,
-        message: 'File is uploaded',
-        data: {
-          name: file.name,
-          mimetype: file.mimetype,
-          size: file.size,
-        },
-      });
+        //send response
+        res.send({
+          status: true,
+          message: 'File is uploaded',
+          data: {
+            name: file.name,
+            mimetype: file.mimetype,
+            size: file.size,
+          },
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(err);
     }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-});
+  },
+]);
 
 // routes
 app.use('/api', [protect, checkUserRole]);
