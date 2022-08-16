@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `Answer` ADD COLUMN `offer_id` INTEGER UNSIGNED NULL;
+
+-- AddForeignKey
+ALTER TABLE `Answer` ADD CONSTRAINT `fk_Answer_Offer` FOREIGN KEY (`offer_id`) REFERENCES `Offer`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

@@ -1,0 +1,9 @@
+
+# ignore node module for github
+node_modules/
+
+# ignore env file
+.env
+
+# other file
+~
