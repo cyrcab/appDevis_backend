@@ -3,6 +3,7 @@ import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import * as fs from 'fs';
 import cookieParser from 'cookie-parser';
+import { logger } from './middlewares/logger.js';
 import fileUpload from 'express-fileupload';
 import {
   signup,
@@ -85,6 +86,11 @@ app.post('/upload-pdf', [
 // routes
 app.use('/api', [protect, checkUserRole]);
 setupRoutes(app);
+
+app.use((err, req, res, next) => {
+  logger.error(err);
+  return res.status(500).end();
+});
 
 // server setup
 const server = app.listen(SERVER_PORT || process.env.PORT, () => {
