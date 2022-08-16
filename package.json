@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
+    "start": "npx prisma db push & node app.js",
     "dev": "nodemon app.js",
     "db:pull": "npx prisma db pull",
     "db:push": "npx prisma db push",
