@@ -14,7 +14,7 @@ const app = express();
 const { SERVER_PORT, FRONT_ADRESS } = process.env;
 
 // réglage des cors
-app.use(cors({ credentials: true, origin: 'http://192.168.1.10:19006' }));
+app.use(cors({ credentials: true, origin: FRONT_ADRESS }));
 app.use(json());
 app.use(morgan('dev'));
 app.use(cookieParser());
