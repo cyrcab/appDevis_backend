@@ -70,7 +70,7 @@ export const signin = async (req, res, next) => {
       return res.status(401).send(invalid);
     }
 
-    const accessToken = newToken(user, '30s');
+    const accessToken = newToken(user, '15m');
     const refreshToken = newToken(user, '30d');
 
     const storedRefreshToken = await prisma.refreshToken.upsert({
