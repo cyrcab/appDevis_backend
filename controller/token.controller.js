@@ -4,6 +4,7 @@ import { newToken } from '../services/auth.js';
 export async function refreshToken(req, res, next) {
   const { refreshToken } = req.body;
 
+
   try {
     const token = await prisma.refreshToken.findUnique({
       where: {
@@ -29,7 +30,7 @@ export async function refreshToken(req, res, next) {
 
     const newAcessToken = newToken(existingUser, '15m');
 
-    return res.status(200).json({ accessToken: newAcessToken });
+    return res.status(200).json({ accessToken: newAcessToken, user: existingUser });
   } catch (error) {
     next(error);
     return res.status(500).json({ message: 'Raffraichissement du token impossible' });
