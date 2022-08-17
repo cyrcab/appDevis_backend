@@ -110,5 +110,6 @@ model RefreshToken {
   user User @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_RefreshToken_User")
 
   @@unique([user_id], name: "refreshToken_to_user_UNIQUE")
+  @@unique([token], name: "token_is_unique")
   @@index([user_id], map: "fk_RefreshToken_User_idx")
 }

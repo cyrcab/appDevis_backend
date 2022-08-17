@@ -198,3 +198,8 @@ Invalid `prisma.refreshToken.create()` invocation:
 
 
   Unique constraint failed on the constraint: `RefreshToken_user_id_key`
+2022-08-17T12:05:54.455Z error: jwt expired
+2022-08-17T12:07:08.032Z error: jwt expired
+2022-08-17T12:07:41.779Z error: jwt expired
+2022-08-17T12:10:01.053Z error: jwt expired
+2022-08-17T12:12:04.892Z error: user is not defined

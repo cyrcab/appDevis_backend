@@ -70,7 +70,7 @@ export const signin = async (req, res, next) => {
       return res.status(401).send(invalid);
     }
 
-    const accessToken = newToken(user, '15m');
+    const accessToken = newToken(user, '30s');
     const refreshToken = newToken(user, '30d');
 
     const storedRefreshToken = await prisma.refreshToken.upsert({
@@ -110,19 +110,19 @@ export const signin = async (req, res, next) => {
 };
 
 export const protect = async (req, res, next) => {
-  const { accessToken } = req.cookies;
+  const bearer = req.headers.authorization;
 
-  let payload;
-
-  if (!accessToken) {
-    return res.status(456).json({ message: "Vous n'avez pas l'autorisation" });
+  if (!bearer || !bearer.startsWith('Bearer ')) {
+    return res.status(401).end();
   }
 
+  const token = bearer.split('Bearer ')[1].trim();
+  let payload;
+
   try {
-    payload = await verifyToken(accessToken);
+    payload = await verifyToken(token);
   } catch (error) {
     next(error);
-    return res.status(401).json({ message: 'Veuillez vous reconnecter' });
   }
 
   const user = await prisma.user.findUnique({
@@ -141,48 +141,8 @@ export const protect = async (req, res, next) => {
   next();
 };
 
-export const revokeToken = async (req, res, next) => {
-  try {
-    return res.clearCookie('accessToken').sendStatus(200);
-  } catch (error) {
-    console.error(error);
-    next(error);
-    return res.status(500).end();
-  }
-};
-
-export const checkToken = async (req, res, next) => {
-  const { accessToken } = req.cookies;
-  let payload;
-  try {
-    if (!accessToken) {
-      return res.status(403).end();
-    }
-
-    payload = await verifyToken(accessToken);
-
-    if (!payload) {
-      return res.clearCookie('accessToken');
-    }
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: payload.id,
-      },
-    });
-
-    if (!user) {
-      return res.clearCookie('accessToken').status(403).end();
-    }
-
-    return res.status(200).json(user);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const checkUserRole = (req, res, next) => {
-  if (req.user.role_id !== 1 || req.user.role_id !== 2) {
+  if (req.user.role_id !== 1 && req.user.role_id !== 2) {
     return res.status(401).send({ message: "Vous n'avez pas l'autorisation" });
   }
   next();
