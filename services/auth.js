@@ -125,6 +125,10 @@ export const protect = async (req, res, next) => {
     next(error);
   }
 
+  if (!payload) {
+    return res.status(401).send('Invalid user');
+  }
+
   const user = await prisma.user.findUnique({
     where: {
       id: payload.id,
