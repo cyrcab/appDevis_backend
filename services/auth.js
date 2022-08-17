@@ -19,7 +19,7 @@ export const verifyToken = (token) => {
   });
 };
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   if (!req.body.mail || !req.body.password) {
     return res.status(400).send({ message: 'email and password required' });
   }
@@ -41,11 +41,12 @@ export const signup = async (req, res) => {
     if (error.meta.target === 'mail_UNIQUE') {
       return res.status(409).send({ message: 'Cet utilisateur existe déjà' });
     }
+    next(error);
     return res.status(500).end();
   }
 };
 
-export const signin = async (req, res) => {
+export const signin = async (req, res, next) => {
   if (!req.body.mail || !req.body.password) {
     return res.status(400).send({ message: 'email and password required' });
   }
@@ -93,7 +94,7 @@ export const signin = async (req, res) => {
       })
       .json(user);
   } catch (error) {
-    console.error(error);
+    next(error);
     return res.status(500).end();
   }
 };
@@ -110,6 +111,7 @@ export const protect = async (req, res, next) => {
   try {
     payload = await verifyToken(accessToken);
   } catch (error) {
+    next(error);
     return res.status(401).json({ message: 'Veuillez vous reconnecter' });
   }
 
@@ -170,7 +172,7 @@ export const checkToken = async (req, res, next) => {
 };
 
 export const checkUserRole = (req, res, next) => {
-  if (req.user.role_id !== 1) {
+  if (req.user.role_id !== 1 || req.user.role_id !== 2) {
     return res.status(401).send({ message: "Vous n'avez pas l'autorisation" });
   }
   next();

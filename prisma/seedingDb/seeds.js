@@ -2,6 +2,9 @@ const { SUPERADMIN_PASS, SUPERADMIN_MAIL } = process.env;
 
 const roles = [
   {
+    Name: 'Super Admin',
+  },
+  {
     Name: 'Admin',
   },
 ];
