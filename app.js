@@ -5,12 +5,7 @@ import * as fs from 'fs';
 import cookieParser from 'cookie-parser';
 import { logger } from './middlewares/logger.js';
 import fileUpload from 'express-fileupload';
-import {
-  signup,
-  signin,
-  protect,
-  checkUserRole,
-} from './services/auth.js';
+import { signup, signin, protect, checkUserRole } from './services/auth.js';
 import morgan from 'morgan';
 import setupRoutes from './routes/index.js';
 import { createPdf } from './services/pdf/pdfGenerator.js';
@@ -19,7 +14,7 @@ const app = express();
 const { SERVER_PORT, FRONT_ADRESS } = process.env;
 
 // réglage des cors
-app.use(cors({ credentials: true, origin: FRONT_ADRESS }));
+app.use(cors({ credentials: true, origin: 'http://192.168.1.10:19006' }));
 app.use(json());
 app.use(morgan('dev'));
 app.use(cookieParser());
