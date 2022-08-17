@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
-import { hashPassword, verifyPassword } from '../services/hashPassword';
-import formatDate from '../helpers/formatDate';
-import prisma from '../helpers/prismaClient';
+import { hashPassword, verifyPassword } from '../services/hashPassword.js';
+import formatDate from '../helpers/formatDate.js';
+import prisma from '../helpers/prismaClient.js';
 const secret = process.env.JWT_SECRET;
 
-export const newToken = (user) => {
+export const newToken = (user, expiresIn) => {
   return jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '30m',
+    expiresIn: `${expiresIn}`,
   });
 };
 
@@ -19,7 +19,7 @@ export const verifyToken = (token) => {
   });
 };
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   if (!req.body.mail || !req.body.password) {
     return res.status(400).send({ message: 'email and password required' });
   }
@@ -41,11 +41,12 @@ export const signup = async (req, res) => {
     if (error.meta.target === 'mail_UNIQUE') {
       return res.status(409).send({ message: 'Cet utilisateur existe déjà' });
     }
+    next(error);
     return res.status(500).end();
   }
 };
 
-export const signin = async (req, res) => {
+export const signin = async (req, res, next) => {
   if (!req.body.mail || !req.body.password) {
     return res.status(400).send({ message: 'email and password required' });
   }
@@ -67,42 +68,61 @@ export const signin = async (req, res) => {
 
     if (!match) {
       return res.status(401).send(invalid);
-    } else {
-      const lastLogin = formatDate(new Date());
-      await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          last_login: lastLogin,
-        },
-      });
     }
 
-    const accessToken = newToken(user);
+    const accessToken = newToken(user, '30s');
+    const refreshToken = newToken(user, '30d');
+
+    const storedRefreshToken = await prisma.refreshToken.upsert({
+      create: {
+        token: refreshToken,
+        user: {
+          connect: { id: user.id },
+        },
+      },
+      update: {
+        token: refreshToken,
+      },
+      where: { user_id: user.id },
+    });
+
+    if (!storedRefreshToken) {
+      return res.status(500).end();
+    }
+
+    const lastLogin = formatDate(new Date());
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        last_login: lastLogin,
+      },
+    });
 
     delete user.password;
 
-    return res.status(201).cookie('accessToken', accessToken, { httpOnly: true }).json(user);
+    return res.status(201).json({ user: user, accessToken, refreshToken });
   } catch (error) {
-    console.error(error);
+    next(error);
     return res.status(500).end();
   }
 };
 
 export const protect = async (req, res, next) => {
-  const { accessToken } = req.cookies;
+  const bearer = req.headers.authorization;
 
-  let payload;
-
-  if (!accessToken) {
-    return res.status(403).json({ message: "Vous n'avez pas l'autorisation" });
+  if (!bearer || !bearer.startsWith('Bearer ')) {
+    return res.status(401).send('Pas de bearer détecté');
   }
 
+  const token = bearer.split('Bearer ')[1].trim();
+  let payload;
+
   try {
-    payload = await verifyToken(accessToken);
+    payload = await verifyToken(token);
   } catch (error) {
-    return res.status(401).json({ message: 'Veuillez vous reconnecter' });
+    next(error);
   }
 
   const user = await prisma.user.findUnique({
@@ -112,7 +132,7 @@ export const protect = async (req, res, next) => {
   });
 
   if (!user) {
-    return res.status(401).end();
+    return res.status(401).send('Invalid user');
   }
 
   delete user.password;
@@ -121,48 +141,8 @@ export const protect = async (req, res, next) => {
   next();
 };
 
-export const revokeToken = async (req, res, next) => {
-  try {
-    return res.clearCookie('accessToken').sendStatus(200);
-  } catch (error) {
-    console.error(error);
-    next(error);
-    return res.status(500).end();
-  }
-};
-
-export const checkToken = async (req, res, next) => {
-  const { accessToken } = req.cookies;
-  let payload;
-  try {
-    if (!accessToken) {
-      return res.status(403).end();
-    }
-
-    payload = await verifyToken(accessToken);
-
-    if (!payload) {
-      return res.clearCookie('accessToken');
-    }
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: payload.id,
-      },
-    });
-
-    if (!user) {
-      return res.clearCookie('accessToken').status(403).end();
-    }
-
-    return res.status(200).json(user);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const checkUserRole = (req, res, next) => {
-  if (req.user.role_id !== 1) {
+  if (req.user.role_id !== 1 && req.user.role_id !== 2) {
     return res.status(401).send({ message: "Vous n'avez pas l'autorisation" });
   }
   next();

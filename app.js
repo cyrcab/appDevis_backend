@@ -3,16 +3,18 @@ import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import * as fs from 'fs';
 import cookieParser from 'cookie-parser';
+import { logger } from './middlewares/logger.js';
 import fileUpload from 'express-fileupload';
-import { signup, signin, protect, checkUserRole, revokeToken, checkToken } from './services/auth';
+import { signup, signin, protect, checkUserRole } from './services/auth.js';
 import morgan from 'morgan';
-import setupRoutes from './routes/index';
+import setupRoutes from './routes/index.js';
 import { createPdf } from './services/pdf/pdfGenerator.js';
+import { refreshToken, revokeToken } from './controller/token.controller.js';
 const app = express();
-const { SERVER_PORT } = process.env;
+const { SERVER_PORT, FRONT_ADRESS } = process.env;
 
 // réglage des cors
-app.use(cors({ credentials: true, origin: 'http://172.20.10.2:19006' }));
+app.use(cors({ credentials: true, origin: 'http://192.168.1.10:19006' }));
 app.use(json());
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -28,7 +30,16 @@ app.use(express.static('./services/pdf/uploads'));
 // app.post('/signup', signup);
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
-app.get('/check-token', checkToken);
+app.post('/refresh-token', refreshToken);
+
+app.get('/', async (req, res, next) => {
+  try {
+    return res.status(200).send('ok');
+  } catch (error) {
+    next(error);
+    return res.status(500).end();
+  }
+});
 app.post('/upload-pdf', [
   protect,
   createPdf,
@@ -69,11 +80,17 @@ app.post('/upload-pdf', [
 
 // routes
 app.use('/api', [protect, checkUserRole]);
+
 setupRoutes(app);
 
+app.use((err, req, res, next) => {
+  logger.error(err);
+  return res.status(500).end();
+});
+
 // server setup
-const server = app.listen(SERVER_PORT, () => {
-  console.log(`Server is running on port ${SERVER_PORT}`);
+const server = app.listen(SERVER_PORT || process.env.PORT, () => {
+  console.log(`Server is running on port ${SERVER_PORT || process.env.PORT}`);
 });
 
 export default server;

@@ -1,5 +1,5 @@
-import prisma from '../helpers/prismaClient';
-import formatDate from '../helpers/formatDate';
+import prisma from '../helpers/prismaClient.js';
+import formatDate from '../helpers/formatDate.js';
 
 export async function handleCreateCustomer(req, res, next) {
   try {

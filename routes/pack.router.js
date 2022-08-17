@@ -5,11 +5,11 @@ import {
   handleGetUniquePack,
   handleDeletePack,
   handleUpdatePack,
-} from '../controller/pack.controller';
+} from '../controller/pack.controller.js';
 import {
   packCreationValidation,
   packUpdateValidation,
-} from '../middlewares/validation/pack.validation';
+} from '../middlewares/validation/pack.validation.js';
 
 const packRouter = Router();
 

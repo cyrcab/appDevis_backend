@@ -1,10 +1,10 @@
-import prisma from '../helpers/prismaClient';
-import formatDate from '../helpers/formatDate';
+import prisma from '../helpers/prismaClient.js';
+import formatDate from '../helpers/formatDate.js';
 import {
   addPackPriceAndUpdate,
   substractPriceAndUpdate,
   updatePackPriceAndUpdate,
-} from '../services/updateFilePrice';
+} from '../services/updateFilePrice.js';
 
 async function handleCreateOption(req, res, next) {
   try {

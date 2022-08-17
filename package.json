@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node --experimental-modules --es-module-specifier-resolution=node app.js",
-    "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node app.js",
+    "start": "(npx prisma db push & npx prisma db seed) & node app.js",
+    "dev": "nodemon app.js",
     "db:pull": "npx prisma db pull",
     "db:push": "npx prisma db push",
     "db:studio": "npx prisma studio"
@@ -18,6 +18,7 @@
     "argon2": "^0.28.5",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-fileupload": "^1.4.0",
     "html-pdf": "^3.0.1",
@@ -25,10 +26,9 @@
     "morgan": "^1.10.0",
     "pdf-creator-node": "^2.3.5",
     "prisma": "^4.0.0",
-    "rand-token": "^1.0.1"
+    "winston": "^3.8.1"
   },
   "devDependencies": {
-    "dotenv": "^16.0.1",
     "nodemon": "^2.0.16"
   }
 }

@@ -1,9 +1,9 @@
-import userRouter from './user.router';
-import packRouter from './pack.router';
+import userRouter from './user.router.js';
+import packRouter from './pack.router.js';
 
-import answerRouter from './option.router';
-import customerRouter from './customer.router';
-import fileRouter from './file.router';
+import answerRouter from './option.router.js';
+import customerRouter from './customer.router.js';
+import fileRouter from './file.router.js';
 
 const setupRoutes = (app) => {
   app.use('/api/users', userRouter);

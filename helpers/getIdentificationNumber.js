@@ -1,4 +1,4 @@
-import prisma from './prismaClient';
+import prisma from './prismaClient.js';
 
 export const getBillIdentificationNumber = async (dateCreation) => {
   const dateMonth =

@@ -5,7 +5,7 @@ import {
   getUniqFile,
   deleteFile,
   updateFile,
-} from '../controller/file.controller';
+} from '../controller/file.controller.js';
 
 const fileRouter = Router();
 
