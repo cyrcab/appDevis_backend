@@ -105,9 +105,10 @@ model Role {
 model RefreshToken {
   id      Int    @id @default(autoincrement()) @db.UnsignedInt
   user_id Int    @db.UnsignedInt
-  token   String @db.VarChar(255)
+  token   String @db.VarChar(400)
 
   user User @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_RefreshToken_User")
 
+  @@unique([user_id], name: "refreshToken_to_user_UNIQUE")
   @@index([user_id], map: "fk_RefreshToken_User_idx")
 }

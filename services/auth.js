@@ -4,9 +4,9 @@ import formatDate from '../helpers/formatDate.js';
 import prisma from '../helpers/prismaClient.js';
 const secret = process.env.JWT_SECRET;
 
-export const newToken = (user) => {
+export const newToken = (user, expiresIn) => {
   return jwt.sign({ id: user.id, mail: user.mail, password: user.password }, secret, {
-    expiresIn: '30m',
+    expiresIn: `${expiresIn}`,
   });
 };
 
@@ -68,31 +68,41 @@ export const signin = async (req, res, next) => {
 
     if (!match) {
       return res.status(401).send(invalid);
-    } else {
-      const lastLogin = formatDate(new Date());
-      await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          last_login: lastLogin,
-        },
-      });
     }
 
-    const accessToken = newToken(user);
+    const accessToken = newToken(user, '15m');
+    const refreshToken = newToken(user, '30d');
+
+    const storedRefreshToken = await prisma.refreshToken.upsert({
+      create: {
+        token: refreshToken,
+        user: {
+          connect: { id: user.id },
+        },
+      },
+      update: {
+        token: refreshToken,
+      },
+      where: { user_id: user.id },
+    });
+
+    if (!storedRefreshToken) {
+      return res.status(500).end();
+    }
+
+    const lastLogin = formatDate(new Date());
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        last_login: lastLogin,
+      },
+    });
 
     delete user.password;
 
-    return res
-      .status(201)
-      .cookie('accessToken', accessToken, {
-        httpOnly: true,
-        maxAge: 9999,
-        secure: true,
-        sameSite: 'None',
-      })
-      .json(user);
+    return res.status(201).json({ user: user, accessToken, refreshToken });
   } catch (error) {
     next(error);
     return res.status(500).end();
