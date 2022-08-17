@@ -10,12 +10,11 @@ import {
   signin,
   protect,
   checkUserRole,
-  revokeToken,
-  checkToken,
 } from './services/auth.js';
 import morgan from 'morgan';
 import setupRoutes from './routes/index.js';
 import { createPdf } from './services/pdf/pdfGenerator.js';
+import { refreshToken, revokeToken } from './controller/token.controller.js';
 const app = express();
 const { SERVER_PORT, FRONT_ADRESS } = process.env;
 
@@ -36,7 +35,8 @@ app.use(express.static('./services/pdf/uploads'));
 // app.post('/signup', signup);
 app.post('/signin', signin);
 app.post('/signout', revokeToken);
-app.get('/check-token', checkToken);
+app.post('/refresh-token', refreshToken);
+
 app.get('/', async (req, res, next) => {
   try {
     return res.status(200).send('ok');
@@ -85,6 +85,7 @@ app.post('/upload-pdf', [
 
 // routes
 app.use('/api', [protect, checkUserRole]);
+
 setupRoutes(app);
 
 app.use((err, req, res, next) => {
