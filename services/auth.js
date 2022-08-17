@@ -124,6 +124,7 @@ export const protect = async (req, res, next) => {
       payload = await verifyToken(token);
     } catch (error) {
       next(error);
+      return;
     }
 
     const user = await prisma.user.findUnique({
