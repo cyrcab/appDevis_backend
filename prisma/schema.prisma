@@ -100,6 +100,8 @@ model Role {
   id   Int    @id @default(autoincrement())
   Name String @db.VarChar(255)
   User User[]
+
+  @@unique([Name], map: "Name_UNIQUE")
 }
 
 model RefreshToken {
