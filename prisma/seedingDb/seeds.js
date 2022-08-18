@@ -7,6 +7,9 @@ const roles = [
   {
     Name: 'Admin',
   },
+  {
+    Name: 'Invité',
+  },
 ];
 const users = [
   {
